@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classic Closet - Cool Fashion</title>
+    <link rel="stylesheet" href="closet.css" />
+  </head>
+ 
+ 
+  <div>
+    <header class="header">
+      <div class="nav-container">
+        <div class="logo-container">
+          <img src="logo.png" alt="Logo" class="logo" />
+          </div>
+    
+    
+    <div class="nav-right-group">
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#Products">Products</a></li>
+          <li><a href="#new">New Releases</a></li>
+          <li><a href="#contact">Contact</a></li>
+          </ul>
+          </nav>
+          
+          <div class="auth-wrapper">
+            <button class="btn-signin">Sign In</button>
+            
+            </div>
+            
+            <div class="cart-icon" onclick="showCart()">
+              Cart (<span id="cart-count">0</span>)
+</div>
+</div>
+</div>
+</header>
+</div>
+
+
+<main class="main-content">
+  <section class="signup-cta-section">
+    <div class="cta-content">
+        <h2>BECOME A MEMBER</h2>
+        <p>Get early access to our T-shirt drops and hand-carved wood collection.</p>
+        <button class="btn-create-account" onclick="openCreateModal()">Create Account</button>
+    </div>
+  </section>
+  
+  <section class="all">
+  <img src="image.svg" alt="Image" class="all"/> 
+</section><section class="products-section" id="products">
+    <h2 class="section-title">COLLECTION</h2>
+    <div class="products-grid" id="products-grid"></div>
+</section>
+
+<section class="hero all" id="home">
+      <!--<img src="image.svg" alt="Classic Closet Image" class="all" />-->
+      <h1>ORDER IN SECONDS</h1>
+      <img src="image.svg" alt="Classic Closet Logo" class="all" />
+      <p>WHERE FASHION MEETS TASTE</p>
+</section>
+
+<section class="products-section" id="products">
+      <h2 class="section-title">COLLECTION</h2>
+      <div class="products-grid" id="products-grid"></div>
+    </section>
+    </main>
+
+<footer class="footer">
+      <p>© 2026 Classic Closet. All rights reserved.</p>
+    </footer>
+    
+    
+    <!-- Sign In Modal -->
+<div class="modal" id="signInModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('signInModal')">&times;</button>
+        <h2>SIGN IN</h2>
+        <form onsubmit="handleSignIn(event)">
+            <div class="form-group">
+                <label for="signin-email">EMAIL</label>
+                <input type="email" id="signin-email" required>
+            </div>
+            <div class="form-group">
+                <label for="signin-password">PASSWORD</label>
+                <input type="password" id="signin-password" required>
+            </div>
+            <button type="submit" class="submit-btn">SIGN IN</button>
+            <div class="form-footer">
+                Don't have an account? <a onclick="switchToCreateAccount()">Create one</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Create Account Modal -->
+<div class="modal" id="createAccountModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('createAccountModal')">&times;</button>
+        <h2>CREATE ACCOUNT</h2>
+        <form onsubmit="handleCreateAccount(event)">
+            <div class="form-group">
+                <label for="signup-name">FULL NAME</label>
+                <input type="text" id="signup-name" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-email">EMAIL</label>
+                <input type="email" id="signup-email" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-password">PASSWORD</label>
+                <input type="password" id="signup-password" required minlength="6">
+            </div>
+            <button type="submit" class="submit-btn">CREATE ACCOUNT</button>
+            <div class="form-footer">
+                Already have an account? <a onclick="switchToSignIn()">Sign in</a>
+            </div>
+        </form>
+    </div>
+</div>
+    
+
+    <script src="closet.js"></script>
+  </body>
+</html>
+
+
+
+

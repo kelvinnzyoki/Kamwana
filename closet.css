@@ -1,0 +1,711 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap");
+
+/* 1. Prevent the whole page from horizontal shifting */
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* This stops the "flexing to the left/right" on mobile */
+  position: relative;
+}
+
+
+/* 3. Force Content to stay centered and "Constant" on mobile */
+.signup-cta-section, 
+.hero, 
+.products-section,
+.all {
+  width: 100%;
+  max-width: 1200px; /* Limits size on PC */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+/* 4. The "Highest IQ" Mobile Lock */
+@media (max-width: 768px) {
+  /* This ensures that on mobile, the content doesn't shrink or expand 
+     erratically, it stays 'constant' within the screen width */
+  .products-grid {
+    grid-template-columns: 1fr 1fr; /* Your 2-column layout */
+    width: 100%;
+    gap: 15px; /* Tighter gaps for smaller screens */
+  }
+
+  .product-card {
+    width: 100%; /* Card stays exactly within its half of the screen */
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-right-group {
+    gap: 0.5rem; /* Tighten space on very small phones */
+  }
+  
+  .auth-wrapper {
+    margin-left: 5px;
+  }
+  
+  .btn-signin {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem; /* Scale down slightly for mobile */
+  }
+}
+
+
+/* Rest of your CSS starts here */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* Updated to Inter */
+  font-family: 'Inter', "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #0a0a0a;
+  color: #e8e8e8;
+  /* ... rest of your body styles ... */
+}
+
+.all {
+  max-width: 400px;
+  height: auto;
+
+}
+
+.header {
+  background: rgba(18, 18, 18, 0.98);
+  backdrop-filter: blur(10px);
+  padding: 1rem 5%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  left: 0;
+}
+
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 1; /* Allows logo to stay small if space is tight */
+}
+
+
+
+
+.logo {
+  width: 120px; /* controls size */
+  height: auto; /* keeps proportions */
+  font-size: 1.8rem;
+  font-weight: 300;
+  letter-spacing: 3px;
+  color: #d4af37;
+  text-transform: uppercase;
+}
+
+
+.brand-name {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Ensure the container uses the full width */
+.nav-container {
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between; /* Logo on left, Everything else on right */
+  align-items: center;
+  flex-wrap: nowrap; /* Forces everything to stay in one horizontal line */
+  gap: 15px; /* Adds a small safety gap between main groups */
+}
+
+
+
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Ensure buttons are visible */
+.btn-signin, .btn-create {
+  display: inline-block;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* FIX: Check your Media Query at the bottom of your CSS */
+/* If you have 'display: none' inside @media (max-width: 768px), 
+   the buttons will vanish on smaller screens. Change it to this: */
+@media (max-width: 1024px) {
+  .nav-links {
+    display: none; /* Hide links first to save space, but keep buttons */
+  }
+}
+
+
+.nav-links {
+  display: flex;
+  gap: 1rem; /* Reduced to save horizontal space */
+  list-style: none;
+  margin: 0; /* Remove the 40px margin that pushes items to the right */
+  padding: 0;
+  white-space: nowrap; /* Prevents text like "New Releases" from breaking into 2 lines */
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #c0c0c0;
+  font-weight: 400;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+  position: relative;
+  font-size: 0.95rem;
+}
+
+.nav-links a:hover {
+  color: #d4af37;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #d4af37;
+  transition: width 0.3s;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+
+.cart-icon {
+  background: #111;
+  color: #d4af37;
+  padding: 0.7rem 1.5rem;
+  border: 1px solid #d4af37;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.cart-icon:hover {
+  background: #d4af37;
+  color: #0a0a0a;
+}
+
+/* Container for the new div */
+.nav-right-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Space between Nav, Auth Div, and Cart */
+  flex-wrap: nowrap;
+}
+
+/* Style for the new auth div */
+.auth-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 10px; /* Small push away from nav links */
+  flex-shrink: 0;   /* Ensures the button doesn't get squashed */
+}
+
+/* Ensure the button stays professional */
+.btn-signin {
+  background: transparent;
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 0.5rem 1.2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap; /* Prevents "Sign In" from breaking into two lines */
+}
+
+.btn-signin:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: #d4af37;
+}
+
+
+
+
+/* Create Account Section before Products */
+.signup-cta-section {
+    background: #111; /* Slightly lighter than the body bg */
+    padding: 60px 20px;
+    text-align: center;
+    border-top: 1px solid #222;
+    border-bottom: 1px solid #222;
+    margin-bottom: 40px;
+}
+
+.cta-content h2 {
+    font-size: 2rem;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.cta-content p {
+    color: #888;
+    margin-bottom: 25px;
+    font-weight: 300;
+}
+
+.btn-create-account {
+    background: #d4af37;
+    color: #0a0a0a;
+    border: none;
+    padding: 15px 40px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: transform 0.2s;
+}
+
+.btn-create-account:hover {
+    transform: scale(1.05);
+    background: #e5be48;
+}
+
+
+
+.form-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.form-footer a {
+    color: #d4af37;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}
+
+
+.hero {
+  max-width: 1400px;
+  margin: 5rem auto 3rem;
+  padding: 0 2rem;
+  text-align: center;
+  color: #e8e8e8;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
+  letter-spacing: 4px;
+  animation: fadeInDown 1s;
+  color: #f5f5f5;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #a0a0a0;
+  font-weight: 300;
+  letter-spacing: 2px;
+  animation: fadeInUp 1s;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.products-section {
+  max-width: 300px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+  display: block;
+}
+
+.section-title {
+  color: #f5f5f5;
+  font-size: 2.2rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  font-weight: 300;
+  letter-spacing: 3px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin-bottom: 3rem;
+  width: 300px;
+}
+
+.product-card {
+  background: #151515;
+  border-radius: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.4s ease;
+  cursor: pointer;
+  animation: fadeIn 0.6s;
+  width: 400px;
+  
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.product-card:hover {
+  border-color: #d4af37;
+  transform: translateY(-5px);
+}
+
+.product-image {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  position: relative;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This stops the image from pushing the card wider */
+}
+
+.product-card:nth-child(1) .product-image {
+  background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(2) .product-image {
+  background: linear-gradient(135deg, #1e2a3a 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(3) .product-image {
+  background: linear-gradient(135deg, #2a2520 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(4) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-image::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.product-card:hover .product-image::before {
+  left: 100%;
+}
+
+.product-info {
+  padding: 1.8rem;
+}
+
+.product-name {
+  font-size: 1.3rem;
+  font-weight: 400;
+  margin-bottom: 0.7rem;
+  color: #e8e8e8;
+  letter-spacing: 1px;
+}
+
+.product-description {
+  color: #888;
+  margin-bottom: 1.3rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.product-price {
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: #d4af37;
+  letter-spacing: 1px;
+}
+
+.add-to-cart {
+  background: transparent;
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  padding: 0.6rem 1.3rem;
+  border-radius: 0;
+  cursor: pointer;
+  font-weight: 400;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.add-to-cart:hover {
+  background: #d4af37;
+  color: #0a0a0a;
+}
+
+.footer {
+  background: #0f0f0f;
+  color: #707070;
+  text-align: center;
+  padding: 2.5rem;
+  margin-top: 5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 300;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .nav-links {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .auth-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.8rem;
+}
+
+.sign-in-btn, .create-account-btn {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+}
+
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background: #151515;
+    padding: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    color: #888;
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #d4af37;
+}
+
+.modal h2 {
+    color: #f5f5f5;
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.9rem;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e8e8e8;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #d4af37;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: #d4af37;
+    color: #0a0a0a;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    background: #c29d2f;
+}
+
+.modal-content {
+    padding: 2rem 1.5rem;
+    width: 95%;
+}
+  
+}
+
+.modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0; left: 0;
+    width: 380;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #151515;
+    padding: 3rem;
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid #d4af37;
+    position: relative;
+    text-align: center;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+}
+
+#auth-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+
+#auth-form input {
+    background: #0a0a0a;
+    border: 1px solid #333;
+    padding: 1rem;
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-submit {
+    background: #d4af37;
+    color: #0a0a0a;
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.modal-footer-text { margin-top: 1.5rem; font-size: 0.8rem; color: #888; }
+.modal-footer-text a { color: #d4af37; text-decoration: none; }
+
+
