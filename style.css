@@ -1,10 +1,25 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap");
 
-/* 1. Prevent the whole page from horizontal shifting */
+
+
 html, body {
+  margin: 0;
+  padding: 0;
   width: 100%;
-  overflow-x: hidden; /* This stops the "flexing to the left/right" on mobile */
-  position: relative;
+  /* This prevents the entire page from sliding left/right */
+  overflow-x: hidden; 
+  background: #0a0a0a;
+  color: #e8e8e8;
+  font-family: 'Inter', "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* The wrapper that keeps everything EXCEPT the header contained */
+.main-content {
+  width: 100%;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
@@ -60,13 +75,6 @@ html, body {
   box-sizing: border-box;
 }
 
-body {
-  /* Updated to Inter */
-  font-family: 'Inter', "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #0a0a0a;
-  color: #e8e8e8;
-  /* ... rest of your body styles ... */
-}
 
 .all {
   max-width: 400px;
@@ -75,15 +83,25 @@ body {
 }
 
 .header {
+  width: 100%;
   background: rgba(18, 18, 18, 0.98);
   backdrop-filter: blur(10px);
-  padding: 1rem 5%;
+  -webkit-backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
   z-index: 1000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  width: 100%;
-  left: 0;
+  /* Allows the header items to be scrolled if they are too wide */
+  overflow-x: auto; 
+  white-space: nowrap;
+}
+
+.nav-container {
+  min-width: fit-content; /* Ensures content doesn't squash */
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 
@@ -113,16 +131,7 @@ body {
   color: #fff;
 }
 
-/* Ensure the container uses the full width */
-.nav-container {
-  max-width: 100%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between; /* Logo on left, Everything else on right */
-  align-items: center;
-  flex-wrap: nowrap; /* Forces everything to stay in one horizontal line */
-  gap: 15px; /* Adds a small safety gap between main groups */
-}
+
 
 
 
@@ -302,31 +311,7 @@ body {
 }
 
 
-.hero {
-  max-width: 1400px;
-  margin: 5rem auto 3rem;
-  padding: 0 2rem;
-  text-align: center;
-  color: #e8e8e8;
-}
-
-.hero h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
-  font-weight: 300;
-  letter-spacing: 4px;
-  animation: fadeInDown 1s;
-  color: #f5f5f5;
-}
-
-.hero p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  color: #a0a0a0;
-  font-weight: 300;
-  letter-spacing: 2px;
-  animation: fadeInUp 1s;
-}
+ 
 
 @keyframes fadeInDown {
   from {
@@ -350,41 +335,7 @@ body {
   }
 }
 
-.products-section {
-  max-width: 300px;
-  margin: 3rem auto;
-  padding: 0 2rem;
-  display: block;
-}
-
-.section-title {
-  color: #f5f5f5;
-  font-size: 2.2rem;
-  margin-bottom: 3rem;
-  text-align: center;
-  font-weight: 300;
-  letter-spacing: 3px;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  margin-bottom: 3rem;
-  width: 300px;
-}
-
-.product-card {
-  background: #151515;
-  border-radius: 0;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.4s ease;
-  cursor: pointer;
-  animation: fadeIn 0.6s;
-  width: 400px;
-  
-}
+ 
 
 @keyframes fadeIn {
   from {
@@ -397,6 +348,113 @@ body {
   }
 }
 
+
+/* Hero Section */
+.hero {
+  width: 100%;
+  max-width: 100%;
+  padding: 4rem 1.5rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.hero h1 {
+  font-size: clamp(1.8rem, 8vw, 3.5rem); /* Adjusts size based on screen */
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1rem;
+  color: #a0a0a0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+
+
+.sub-page {
+    padding: 60px 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.craft-grid, .lookbook-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.craft-card, .lookbook-item {
+    background: #151515;
+    padding: 2rem;
+    border: 1px solid #222;
+}
+
+.size-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+}
+
+.size-table th, .size-table td {
+    border: 1px solid #333;
+    padding: 1rem;
+    color: #ccc;
+}
+
+.size-table th { color: #d4af37; }
+
+.faq-item {
+    text-align: left;
+    background: #111;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 2px solid #d4af37;
+}
+
+
+
+/* Products Section */
+.products-section {
+  width: 100%;
+  max-width: 1200px; /* PC limit */
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 3px;
+}
+
+/* The 2-Column Grid Fix */
+.products-grid {
+  display: grid;
+  /* Exactly 2 columns that fit the screen width */
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 15px;
+  width: 100%;
+}
+
+/* Product Card Components */
+.product-card {
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%; /* Fits exactly in its grid cell */
+  display: flex;
+  flex-direction: column;
+}
+
 .product-card:hover {
   border-color: #d4af37;
   transform: translateY(-5px);
@@ -404,21 +462,76 @@ body {
 
 .product-image {
   width: 100%;
-  height: 100px;
+  height: 200px; /* Fixed height for mobile uniformity */
+  background: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
-  position: relative;
   overflow: hidden;
-  background: #1a1a1a;
 }
 
 .product-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* This stops the image from pushing the card wider */
+  object-fit: cover;
 }
+
+.product-info {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-description {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.product-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-price {
+  font-size: 1.1rem;
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.add-to-cart {
+  width: 100%;
+  margin-top: 15px;
+  padding: 0.8rem;
+  background: transparent;
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* Footer */
+.footer {
+  width: 100%;
+  padding: 3rem 1rem;
+  text-align: center;
+  background: #0f0f0f;
+  border-top: 1px solid #222;
+}
+
+
+
+
+
+
+
 
 .product-card:nth-child(1) .product-image {
   background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
@@ -435,6 +548,68 @@ body {
 .product-card:nth-child(4) .product-image {
   background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
 }
+
+.product-card:nth-child(5) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(6) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(7) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(8) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(9) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(10) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(11) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(12) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(13) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(14) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(15) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(16) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(17) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(18) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+
+.product-card:nth-child(19) .product-image {
+  background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
+}
+  
+  
 
 .product-image::before {
   content: "";
@@ -456,9 +631,7 @@ body {
   left: 100%;
 }
 
-.product-info {
-  padding: 1.8rem;
-}
+
 
 .product-name {
   font-size: 1.3rem;
@@ -468,59 +641,15 @@ body {
   letter-spacing: 1px;
 }
 
-.product-description {
-  color: #888;
-  margin-bottom: 1.3rem;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  font-weight: 300;
-}
 
-.product-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
 
-.product-price {
-  font-size: 1.4rem;
-  font-weight: 300;
-  color: #d4af37;
-  letter-spacing: 1px;
-}
-
-.add-to-cart {
-  background: transparent;
-  color: #d4af37;
-  border: 1px solid #d4af37;
-  padding: 0.6rem 1.3rem;
-  border-radius: 0;
-  cursor: pointer;
-  font-weight: 400;
-  transition: all 0.3s;
-  letter-spacing: 1px;
-  font-size: 0.85rem;
-  width: 100%;
-}
 
 .add-to-cart:hover {
   background: #d4af37;
   color: #0a0a0a;
 }
 
-.footer {
-  background: #0f0f0f;
-  color: #707070;
-  text-align: center;
-  padding: 2.5rem;
-  margin-top: 5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  font-weight: 300;
-  letter-spacing: 1px;
-  font-size: 0.9rem;
-}
+
 
 @media (max-width: 768px) {
   .hero h1 {
@@ -532,9 +661,7 @@ body {
     font-size: 0.85rem;
   }
 
-  .products-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+ 
   
   .auth-buttons {
     flex-direction: column;
@@ -709,3 +836,4 @@ body {
 .modal-footer-text a { color: #d4af37; text-decoration: none; }
 
 
+  
