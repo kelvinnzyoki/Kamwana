@@ -8,7 +8,24 @@ const products = [
     { id: 1, name: "Premium Classic Tee", price: 45.00, desc: "100% Organic Egyptian Cotton", img: "image1.jpg" },
     { id: 2, name: "Luxury Linen Shorts", price: 65.00, desc: "Breathable Italian tailored fit", img: "image2.jpg" },
     { id: 3, name: "Artisan Leather Shoes", price: 120.00, desc: "Hand-stitched premium leather", img: "image3.jpg" },
-    { id: 4, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image4.jpg" }
+    { id: 4, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image4.jpg" },
+    { id: 5, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image5.jpg" },
+    { id: 6, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image6.jpg" },
+    { id: 7, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image7.jpg" },
+    { id: 8, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image8.jpg" },
+    { id: 9, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image9.jpg" },
+    { id: 10, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image10.jpg" },
+    { id: 11, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image11.jpg" },
+    { id: 12, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image12.jpg" },
+    { id: 13, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image13.jpg" },
+    { id: 14, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image14.jpg" },
+    { id: 15, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image15.jpg" },
+    { id: 16, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image16.jpg" },
+    { id: 17, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image17.jpg" },
+    { id: 18, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image18.jpg" },
+    { id: 19, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image19.jpg" }
+    
+    { id: 0, name: "Heritage Wood Mask", price: 210.00, desc: "Hand-carved Ebony wood artifact", img: "image6.jpg" }
 ];
 
 // 2. STATE: Application Data
@@ -127,3 +144,39 @@ function handleCreateAccount(event) {
     alert(`Account created successfully. Welcome to the Closet, ${name}!`);
     closeModal('createAccountModal');
 }
+
+
+
+/**
+ * Page Navigation System
+ * Handles switching between the Shop and Sub-pages
+ */
+function navigateTo(pageId) {
+    // 1. Get all sections we might want to hide
+    const mainSections = ['home', 'products', 'signup-cta-section'];
+    const subPages = document.querySelectorAll('.sub-page');
+
+    // 2. Hide Homepage Sections
+    mainSections.forEach(id => {
+        const el = document.getElementById(id) || document.querySelector('.' + id);
+        if(el) el.style.display = 'none';
+    });
+
+    // 3. Hide all other Sub-pages
+    subPages.forEach(page => page.style.display = 'none');
+
+    // 4. Show the requested page
+    const targetPage = document.getElementById(pageId);
+    if(targetPage) {
+        targetPage.style.display = 'block';
+        window.scrollTo(0, 0); // Reset scroll to top
+    }
+}
+
+// Function to return to the Home/Shop
+function goToHome() {
+    location.reload(); // Simplest way to reset the shop state
+}
+
+// Add Click Listeners to your Navigation Links
+// Example: <a href="#" onclick="navigateTo('fit-guide')">Size Guide</a>
