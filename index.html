@@ -8,21 +8,21 @@
   </head>
  
  
-  <div>
+  <body>
+    <div>
     <header class="header">
       <div class="nav-container">
         <div class="logo-container">
-          <img src="logo.png" alt="Logo" class="logo" />
+          <img src="logo1.png" alt="Logo" class="logo" />
           </div>
     
     
     <div class="nav-right-group">
       <nav>
         <ul class="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#Products">Products</a></li>
-          <li><a href="#new">New Releases</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#" onclick="goToHome()">Home</a></li>
+          <li><a href="#" onclick="navigateTo('our-craft')">Our Craft</a></li>
+          <li><a href="#" onclick="navigateTo('fit-guide')">Fit Guide</a></li>
           </ul>
           </nav>
           
@@ -41,6 +41,66 @@
 
 
 <main class="main-content">
+  
+  
+  <section id="our-craft" class="sub-page" style="display:none;">
+        <div class="content-wrapper">
+            <h2>ARTISAN MASTERY</h2>
+            <div class="craft-grid">
+                <div class="craft-card">
+                    <div class="craft-img-placeholder">🪵</div>
+                    <h3>Sustainably Sourced</h3>
+                    <p>Every piece of Ebony and Teak is ethically harvested from protected African woodlands.</p>
+                </div>
+                <div class="craft-card">
+                    <div class="craft-img-placeholder">🪚</div>
+                    <h3>Hand-Carved</h3>
+                    <p>No machines. Just iron tools and decades of passed-down carving heritage.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="fit-guide" class="sub-page" style="display:none;">
+        <div class="content-wrapper">
+            <h2>FIT & CARE</h2>
+            <table class="size-table">
+                <tr><th>Size</th><th>Chest (in)</th><th>Length (in)</th></tr>
+                <tr><td>S</td><td>36-38</td><td>27</td></tr>
+                <tr><td>M</td><td>39-41</td><td>28</td></tr>
+                <tr><td>L</td><td>42-44</td><td>29</td></tr>
+            </table>
+            <div class="care-tips">
+                <p><strong>Clothing:</strong> Wash cold, hang dry.</p>
+                <p><strong>Wood:</strong> Polish with natural beeswax every 6 months.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="lookbook" class="sub-page" style="display:none;">
+        <div class="content-wrapper">
+            <h2>COMMUNITY LOOKBOOK</h2>
+            <div class="lookbook-grid">
+                <div class="lookbook-item">📸 @ClassicUser1</div>
+                <div class="lookbook-item">📸 @ClosetStyle</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="shipping" class="sub-page" style="display:none;">
+        <div class="content-wrapper">
+            <h2>SHIPPING & RETURNS</h2>
+            <div class="faq-item">
+                <h4>How long is delivery?</h4>
+                <p>5-7 business days for fashion. 14 days for custom wood carvings.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Return Policy?</h4>
+                <p>30-day returns on unworn clothing. Wood carvings are final sale.</p>
+            </div>
+        </div>
+    </section>
+
   <section class="signup-cta-section">
     <div class="cta-content">
         <h2>BECOME A MEMBER</h2>
@@ -50,7 +110,7 @@
   </section>
   
   <section class="all">
-  <img src="image.svg" alt="Image" class="all"/> 
+  <img src="image6.jpg" alt="Image" class="all"/> 
 </section><section class="products-section" id="products">
     <h2 class="section-title">COLLECTION</h2>
     <div class="products-grid" id="products-grid"></div>
@@ -130,3 +190,4 @@
 
 
 
+  
