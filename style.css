@@ -1,33 +1,30 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap");
 
-
-
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   /* This prevents the entire page from sliding left/right */
-  overflow-x: hidden; 
+  overflow-x: hidden;
   background: #0a0a0a;
   color: #e8e8e8;
-  font-family: 'Inter', "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* The wrapper that keeps everything EXCEPT the header contained */
+
 .main-content {
-  width: 100%;
-  max-width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 90%; /* Leaves nice breathing room on the sides */
+  max-width: 1400px; /* Prevents the site from becoming too wide on PC */
+  margin: 0 auto; /* Centers the entire website */
+  padding-top: 140px; /* Space for your stacked header */
 }
 
-
 /* 3. Force Content to stay centered and "Constant" on mobile */
-.signup-cta-section, 
-.hero, 
-.products-section,
-.all {
+.signup-cta-section,
+.hero,
+.products-section .all {
   width: 100%;
   max-width: 1200px; /* Limits size on PC */
   margin-left: auto;
@@ -56,17 +53,16 @@ html, body {
   .nav-right-group {
     gap: 0.5rem; /* Tighten space on very small phones */
   }
-  
+
   .auth-wrapper {
     margin-left: 5px;
   }
-  
+
   .btn-signin {
     padding: 0.4rem 0.8rem;
     font-size: 0.75rem; /* Scale down slightly for mobile */
   }
 }
-
 
 /* Rest of your CSS starts here */
 * {
@@ -75,55 +71,87 @@ html, body {
   box-sizing: border-box;
 }
 
-
 .all {
   max-width: 400px;
   height: auto;
-
 }
 
 .header {
-  width: 100%;
+  position: fixed; /* Locks the header to the screen */
+  top: 0; /* Aligns it to the absolute top margin */
+  left: 0; /* Ensures it starts from the left edge */
+  width: 100%; /* Spans the full width of the screen */
+  z-index: 2000; /* Sits above other content */
+  padding-top: 0; /* Removes the top internal space */
+  /*padding-bottom: 10px;*/
   background: rgba(18, 18, 18, 0.98);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   /* Allows the header items to be scrolled if they are too wide */
-  overflow-x: auto; 
+  overflow-x: auto;
   white-space: nowrap;
+  padding: 0; /* Adjust as needed */
+  height: 120px; /* Giving it a fixed height helps alignment */
+}
+
+/* IMPORTANT: This prevents your content from hiding under the fixed header */
+.main-content,
+.signup-cta-section {
+  margin-top: 130px; /* Match this to the height of your header */
 }
 
 .nav-container {
-  min-width: fit-content; /* Ensures content doesn't squash */
-  padding: 1rem 1.5rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 1400px; /* Aligns with the main content */
+  margin: 0 auto;
+  width: 100%;
 }
 
+.nav-right-group {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+}
 
 .logo-container {
   display: flex;
-  align-items: center;
+  vertical-align: top;
   flex-shrink: 1; /* Allows logo to stay small if space is tight */
+  margin: 0;
+  padding: 0;
+  margin-top: -15px;
+  line-height: 0;
+  left: 0;
 }
 
-
-
-
 .logo {
-  width: 120px; /* controls size */
+  width: 100px; /* controls size */
   height: auto; /* keeps proportions */
   font-size: 1.8rem;
   font-weight: 300;
   letter-spacing: 3px;
   color: #d4af37;
   text-transform: uppercase;
+  display: block;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  object-position: top left; /* Forces the image to sit exactly at the pixel boundary */
 }
 
+.nav-container,
+.nav-right-group,
+.logo-container,
+.btn-signin,
+.btn-create-account {
+  pointer-events: auto; /* Enables interaction with these elements */
+  overflow: hidden; /* Prevents scrollbars from appearing */
+}
 
 .brand-name {
   font-size: 1.6rem;
@@ -131,17 +159,14 @@ html, body {
   color: #fff;
 }
 
-
-
-
-
 .auth-buttons {
   display: flex;
   gap: 1rem;
 }
 
 /* Ensure buttons are visible */
-.btn-signin, .btn-create {
+.btn-signin,
+.btn-create {
   display: inline-block;
   visibility: visible;
   opacity: 1;
@@ -156,7 +181,6 @@ html, body {
   }
 }
 
-
 .nav-links {
   display: flex;
   gap: 1rem; /* Reduced to save horizontal space */
@@ -164,6 +188,7 @@ html, body {
   margin: 0; /* Remove the 40px margin that pushes items to the right */
   padding: 0;
   white-space: nowrap; /* Prevents text like "New Releases" from breaking into 2 lines */
+  position: sticky;
 }
 
 .nav-links a {
@@ -173,7 +198,8 @@ html, body {
   letter-spacing: 1px;
   transition: color 0.3s;
   position: relative;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
 }
 
 .nav-links a:hover {
@@ -195,6 +221,12 @@ html, body {
   width: 100%;
 }
 
+/* Prevents the header from being scrollable */
+.header,
+.nav-container,
+.nav-right-group {
+  overflow: hidden;
+}
 
 .cart-icon {
   background: #111;
@@ -213,20 +245,12 @@ html, body {
   color: #0a0a0a;
 }
 
-/* Container for the new div */
-.nav-right-group {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem; /* Space between Nav, Auth Div, and Cart */
-  flex-wrap: nowrap;
-}
-
 /* Style for the new auth div */
 .auth-wrapper {
   display: flex;
   align-items: center;
   margin-left: 10px; /* Small push away from nav links */
-  flex-shrink: 0;   /* Ensures the button doesn't get squashed */
+  flex-shrink: 0; /* Ensures the button doesn't get squashed */
 }
 
 /* Ensure the button stays professional */
@@ -235,7 +259,7 @@ html, body {
   color: #d4af37;
   border: 1px solid rgba(212, 175, 55, 0.4);
   padding: 0.5rem 1.2rem;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.85rem;
   letter-spacing: 1px;
   cursor: pointer;
@@ -248,70 +272,111 @@ html, body {
   border-color: #d4af37;
 }
 
-
-
-
 /* Create Account Section before Products */
 .signup-cta-section {
-    background: #111; /* Slightly lighter than the body bg */
-    padding: 60px 20px;
-    text-align: center;
-    border-top: 1px solid #222;
-    border-bottom: 1px solid #222;
-    margin-bottom: 40px;
+  background: #111;
+  padding: 10px 20px; /* Highly reduced vertical padding */
+  text-align: center;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  width: 100%;
+  position: relative; /* Keeps it right under the sticky header */
+  z-index: 999;
+}
+
+.cta-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .cta-content h2 {
-    font-size: 2rem;
-    letter-spacing: 4px;
-    margin-bottom: 10px;
-    color: #fff;
+  font-size: 0.9rem; /* Smaller font */
+  letter-spacing: 2px;
+  margin-bottom: 0; /* Remove margin to stay on one line */
+  color: #d4af37;
+  text-transform: uppercase;
 }
 
 .cta-content p {
-    color: #888;
-    margin-bottom: 25px;
-    font-weight: 300;
+  color: #888;
+  margin-bottom: 0; /* Remove margin */
+  font-size: 0.8rem;
+  font-weight: 300;
 }
 
 .btn-create-account {
-    background: #d4af37;
-    color: #0a0a0a;
-    border: none;
-    padding: 15px 40px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: transform 0.2s;
+  background: #d4af37;
+  color: #0a0a0a;
+  border: none;
+  padding: 6px 15px; /* Smaller button */
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s;
 }
 
 .btn-create-account:hover {
-    transform: scale(1.05);
-    background: #e5be48;
+  transform: scale(1.05);
+  background: #e5be48;
 }
 
+/* Mobile Fix for the slim bar */
+@media (max-width: 768px) {
+  .cta-content {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .cta-content p {
+    display: none; /* Hide description on mobile to save more space */
+  }
+}
 
+.featured-row-section {
+  width: 90%;
+  max-width: 1400px;
+  margin: -10px auto;
+  padding: 20px;
+  margin-top: -180px;
+  box-sizing: border-box;
+}
 
-.form-footer {
-    text-align: center;
-    margin-top: 1.5rem;
-    color: #888;
-    font-size: 0.9rem;
+.featured-grid {
+  display: grid;
+  /* Forces 3 columns on PC */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  width: 100%;
+  margin: -10px auto;
+  margin-top: -180px;
+  color: #888;
+  font-size: 0.9rem;
+}
+@media (max-width: 1024px) {
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 per row on tablets */
+  }
+}
+
+@media (max-width: 600px) {
+  .featured-grid {
+    grid-template-columns: 1fr; /* 1 per row on small phones */
+  }
 }
 
 .form-footer a {
-    color: #d4af37;
-    text-decoration: none;
-    cursor: pointer;
+  color: #d4af37;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .form-footer a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
-
-
- 
 
 @keyframes fadeInDown {
   from {
@@ -335,8 +400,6 @@ html, body {
   }
 }
 
- 
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -348,7 +411,6 @@ html, body {
   }
 }
 
-
 /* Hero Section */
 .hero {
   width: 100%;
@@ -359,9 +421,8 @@ html, body {
 }
 
 .hero h1 {
-  font-size: clamp(1.8rem, 8vw, 3.5rem); /* Adjusts size based on screen */
-  letter-spacing: 2px;
-  margin-bottom: 1rem;
+  font-size: clamp(2rem, 5vw, 4rem); /* Small on mobile, Large on PC */
+  line-height: 1.2;
 }
 
 .hero p {
@@ -371,55 +432,56 @@ html, body {
   margin: 0 auto;
 }
 
-
-
 .sub-page {
-    padding: 60px 20px;
-    animation: fadeIn 0.5s ease;
+  padding: 60px 20px;
+  animation: fadeIn 0.5s ease;
 }
 
 .content-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.craft-grid, .lookbook-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+.craft-grid,
+.lookbook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-.craft-card, .lookbook-item {
-    background: #151515;
-    padding: 2rem;
-    border: 1px solid #222;
+.craft-card,
+.lookbook-item {
+  background: #151515;
+  padding: 2rem;
+  border: 1px solid #222;
 }
 
 .size-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 2rem 0;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
 }
 
-.size-table th, .size-table td {
-    border: 1px solid #333;
-    padding: 1rem;
-    color: #ccc;
+.size-table th,
+.size-table td {
+  border: 1px solid #333;
+  padding: 1rem;
+  color: #ccc;
 }
 
-.size-table th { color: #d4af37; }
+.size-table th {
+  color: #d4af37;
+}
 
 .faq-item {
-    text-align: left;
-    background: #111;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-left: 2px solid #d4af37;
+  text-align: left;
+  background: #111;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 2px solid #d4af37;
 }
-
-
 
 /* Products Section */
 .products-section {
@@ -440,10 +502,11 @@ html, body {
 /* The 2-Column Grid Fix */
 .products-grid {
   display: grid;
-  /* Exactly 2 columns that fit the screen width */
-  grid-template-columns: repeat(2, 1fr); 
-  gap: 15px;
-  width: 100%;
+  /* This logic creates 2 columns on mobile and 3 or 4 on PC automatically */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  width: 100%; /* Spans the full width of the container */
+  margin: 0 auto;
 }
 
 /* Product Card Components */
@@ -451,6 +514,7 @@ html, body {
   background: #151515;
   border: 1px solid rgba(255, 255, 255, 0.08);
   width: 100%; /* Fits exactly in its grid cell */
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -462,12 +526,18 @@ html, body {
 
 .product-image {
   width: 100%;
-  height: 200px; /* Fixed height for mobile uniformity */
+  height: 350px; /* Taller images look better on PC */
   background: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .product-image {
+    height: 250px; /* Shorter images for mobile screens */
+  }
 }
 
 .product-image img {
@@ -525,13 +595,6 @@ html, body {
   background: #0f0f0f;
   border-top: 1px solid #222;
 }
-
-
-
-
-
-
-
 
 .product-card:nth-child(1) .product-image {
   background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
@@ -608,8 +671,6 @@ html, body {
 .product-card:nth-child(19) .product-image {
   background: linear-gradient(135deg, #2a1f1f 0%, #1a1a1a 100%);
 }
-  
-  
 
 .product-image::before {
   content: "";
@@ -631,8 +692,6 @@ html, body {
   left: 100%;
 }
 
-
-
 .product-name {
   font-size: 1.3rem;
   font-weight: 400;
@@ -641,15 +700,10 @@ html, body {
   letter-spacing: 1px;
 }
 
-
-
-
 .add-to-cart:hover {
   background: #d4af37;
   color: #0a0a0a;
 }
-
-
 
 @media (max-width: 768px) {
   .hero h1 {
@@ -661,179 +715,206 @@ html, body {
     font-size: 0.85rem;
   }
 
- 
-  
   .auth-buttons {
     flex-direction: column;
     width: 100%;
     gap: 0.8rem;
-}
+  }
 
-.sign-in-btn, .create-account-btn {
+  .sign-in-btn,
+  .create-account-btn {
     width: 100%;
     padding: 0.6rem 1rem;
     font-size: 0.85rem;
-}
+  }
 
-
-/* Modal Styles */
+  .modal-content {
+    padding: 2rem 1.5rem;
+    width: 95%;
+  }
+} /* Modal Styles */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px);
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
 }
 
 .modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
 }
 
 .modal-content {
-    background: #151515;
-    padding: 3rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    max-width: 450px;
-    width: 90%;
-    position: relative;
+  background: #151515;
+  padding: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 450px;
+  width: 90%;
+  position: relative;
 }
 
 .modal-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 2rem;
-    color: #888;
-    cursor: pointer;
-    border: none;
-    background: none;
-    transition: color 0.3s;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 2rem;
+  color: #888;
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: color 0.3s;
 }
 
 .modal-close:hover {
-    color: #d4af37;
+  color: #d4af37;
 }
 
 .modal h2 {
-    color: #f5f5f5;
-    font-size: 1.8rem;
-    font-weight: 300;
-    letter-spacing: 2px;
-    margin-bottom: 2rem;
-    text-align: center;
+  color: #f5f5f5;
+  font-size: 1.8rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
-    display: block;
-    color: #a0a0a0;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 1px;
+  display: block;
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
 }
 
 .form-group input {
-    width: 100%;
-    padding: 0.9rem;
-    background: #0a0a0a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #e8e8e8;
-    font-size: 1rem;
-    transition: border-color 0.3s;
+  width: 100%;
+  padding: 0.9rem;
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e8e8e8;
+  font-size: 1rem;
+  transition: border-color 0.3s;
 }
 
 .form-group input:focus {
-    outline: none;
-    border-color: #d4af37;
+  outline: none;
+  border-color: #d4af37;
 }
 
 .submit-btn {
-    width: 100%;
-    padding: 1rem;
-    background: #d4af37;
-    color: #0a0a0a;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    margin-top: 1rem;
+  width: 100%;
+  padding: 1rem;
+  background: #d4af37;
+  color: #0a0a0a;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  margin-top: 1rem;
 }
 
 .submit-btn:hover {
-    background: #c29d2f;
-}
-
-.modal-content {
-    padding: 2rem 1.5rem;
-    width: 95%;
-}
-  
+  background: #c29d2f;
 }
 
 .modal-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0; left: 0;
-    width: 380;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 380;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
-    background: #151515;
-    padding: 3rem;
-    width: 90%;
-    max-width: 400px;
-    border: 1px solid #d4af37;
-    position: relative;
-    text-align: center;
+  background: #151515;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  border: 1px solid #d4af37;
+  position: relative;
+  text-align: center;
+  z-index: 10000;
 }
 
 .close-modal {
-    position: absolute;
-    top: 15px; right: 20px;
-    font-size: 1.5rem;
-    color: #888;
-    cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
 }
 
-#auth-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+#auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
 
 #auth-form input {
-    background: #0a0a0a;
-    border: 1px solid #333;
-    padding: 1rem;
-    color: white;
-    font-family: 'Inter', sans-serif;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  padding: 1rem;
+  color: white;
+  font-family: "Inter", sans-serif;
 }
 
 .btn-submit {
-    background: #d4af37;
-    color: #0a0a0a;
-    border: none;
-    padding: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-transform: uppercase;
+  background: #d4af37;
+  color: #0a0a0a;
+  border: none;
+  padding: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
 }
 
-.modal-footer-text { margin-top: 1.5rem; font-size: 0.8rem; color: #888; }
-.modal-footer-text a { color: #d4af37; text-decoration: none; }
+.modal-footer-text {
+  margin-top: 1.5rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+.modal-footer-text a {
+  color: #d4af37;
+  text-decoration: none;
+}
 
+/* PC Specific Adjustments */
+@media (min-width: 1024px) {
+  .nav-links {
+    gap: 3rem; /* Spread links out more on PC */
+  }
 
-  
+  .hero {
+    padding: 6rem 0; /* More "Air" in the design for big screens */
+  }
+}
+
+/* Mobile Specific Adjustments */
+@media (max-width: 480px) {
+  .products-grid {
+    /* Force exactly 2 columns on small phones if you prefer that look */
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
