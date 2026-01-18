@@ -263,13 +263,49 @@ function handleCreateAccount(event) {
   closeModal("createAccountModal");
 }
 
+
+/*create a new list of products where the price is less than $100*/
+function renderSaleItems() {
+  const grid = document.getElementById("sale-grid");
+  
+  // Logic: Filter the products array for items under $100
+  const saleItems = products.filter(product => product.price < 100); 
+  
+  if (saleItems.length === 0) {
+    grid.innerHTML = "<p>No items are currently on sale. Check back soon!</p>";
+    return;
+  }
+
+  grid.innerHTML = saleItems.map(product => `
+    <div class="product-card">
+        <div class="product-image">
+            <img src="${product.img}" alt="${product.name}">
+        </div>
+        <div class="product-info">
+            <h3 class="product-name">${product.name}</h3>
+            <span class="product-price" style="color: #ff4d4d;">$${product.price}</span>
+            <button class="add-to-cart" onclick="addToCart(${product.id})">ADD TO BAG</button>
+        </div>
+    </div>
+  `).join("");
+}
+
 /**
- * Page Navigation System
  * Handles switching between the Shop and Sub-pages
+ * /**
+ * Page Navigation System
  */
+
+
 function navigateTo(pageId) {
   // 1. Get all sections we might want to hide
-  const mainSections = ["home", "products", "signup-cta-section"];
+  const mainSections = [
+    "home",
+    "products",
+    "signup-cta-section",
+    "featured-drops",
+    "all-image-section",
+  ];
   const subPages = document.querySelectorAll(".sub-page");
 
   // 2. Hide Homepage Sections
@@ -282,17 +318,45 @@ function navigateTo(pageId) {
   subPages.forEach((page) => (page.style.display = "none"));
 
   // 4. Show the requested page
-  const targetPage = document.getElementById(pageId);
-  if (targetPage) {
-    targetPage.style.display = "block";
-    window.scrollTo(0, 0); // Reset scroll to top
+  if (pageId === "products") {
+    document.getElementById("products").style.display = "block";
+  } else if (pageId === "new-arrivals") {
+    renderNewArrivals(); // Run the filter function
+    document.getElementById("new-arrivals").style.display = "block";
+  } else if (pageId === "sale") {
+    renderSaleItems(); // Call the new filter function
+    document.getElementById("sale").style.display = "block";
+  } else {
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) targetPage.style.display = "block";
   }
+
+  window.scrollTo(0, 0); // Reset scroll to top
+}
+
+// Function to only show the last 3 products as "New Arrivals"
+function renderNewArrivals() {
+  const grid = document.getElementById("new-arrivals-grid");
+  // Take the last 3 items from your products array
+  const recentItems = products.slice(-3);
+
+  grid.innerHTML = recentItems
+    .map(
+      (product) => `
+    <div class="product-card">
+        <div class="product-image"><img src="${product.img}" alt="${product.name}"></div>
+        <div class="product-info">
+            <h3 class="product-name">${product.name}</h3>
+            <span class="product-price">$${product.price}</span>
+            <button class="add-to-cart" onclick="addToCart(${product.id})">ADD TO BAG</button>
+        </div>
+    </div>
+  `
+    )
+    .join("");
 }
 
 // Function to return to the Home/Shop
 function goToHome() {
   location.reload(); // Simplest way to reset the shop state
 }
-
-// Add Click Listeners to your Navigation Links
-// Example: <a href="#" onclick="navigateTo('fit-guide')">Size Guide</a>
