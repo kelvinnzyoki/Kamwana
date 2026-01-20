@@ -9,62 +9,42 @@
 
   <body>
     <div>
+      
       <header class="header">
-        <div class="nav-container">
-          <div class="logo-container">
-            <img src="logo1.png" alt="Logo" class="logo" />
-          </div>
-
-          <div class="nav-right-group">
-            <nav>
-              <ul class="nav-links">
-                <li>
-                  <a href="#" onclick="goToHome()">Home</a>
-                </li>
-                <li>
-                  <a href="#" onclick="navigateTo('new-arrivals')">New Arrival</a>
-                </li>
-                <li>
-                  <a href="#" onclick="navigateTo('sale')">Sale</a>
-                </li>
-                <li>
-                  <a href="#" onclick="navigateTo('products')">Shop All</a>
-                </li>
-                <li>
-                  <a href="#" onclick="navigateTo('our-craft')">Our Craft</a>
-                </li>
-                  <a href="#" onclick="navigateTo('fit-guide')">Fit Guide</a>
-                </li>
-                <li>
-                  <a href="#" onclick="navigateTo('lookbook')">Lookbook</a>
-                </li>
-                <li>
-                  <a href="#" onclick="navigateTo('shipping')">Shipping</a>
-                </li>
-                
-
-
-                
-
-
-              </ul>
-            </nav>
-
-            <div class="auth-wrapper">
-              <button class="btn-signin" onclick="openModal('signInModal')">
-                Sign In
-              </button>
-            </div>
-
-            <div class="cart-icon" onclick="showCart()">
-              Cart (<span id="cart-count">0</span>)
-            </div>
-          </div>
-        </div>
-      </header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo-wrapper" onclick="goToHome()">
+        <img src="logo1.png" alt="Classic Closet" class="logo" />
+      </div>
+      
+      <div class="header-actions">
+        <button class="btn-icon btn-signin" onclick="openModal('signInModal')">
+          <span class="btn-text">MEMBER SIGN IN</span>
+        </button>
+        <button class="btn-cart" onclick="showCart()">
+          <span class="cart-label">BAG</span>
+          <span class="cart-count-badge" id="cart-count">0</span>
+        </button>
+      </div>
     </div>
 
-    <section class="signup-cta-section">
+    <div class="header-nav-bar">
+      <ul class="nav-links">
+        <li><a href="#" onclick="goToHome('home')">HOME</a></li>
+        <li><a href="#" onclick="navigateTo('new-arrivals')">NEW</a></li>
+        <li><a href="#" onclick="navigateTo('products')">COLLECTION</a></li>
+        <li><a href="#" onclick="navigateTo('our-craft')">ABOUT</a></li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+      
+      
+      
+    </div>
+
+    <section class="signup-cta-section" id="signupCta">
       <div class="cta-content">
         <h2>Member Access</h2>
         <p>Unlock early drops & artisan carvings.</p>
@@ -87,8 +67,8 @@
       
       <section id="new-arrivals" class="sub-page" style="display: none">
         <div class="content-wrapper">
-          <h2>NEW ARRIVALS</h2>
-          <p>The latest artisan drops from our workshop.</p>
+          <h2 class="section-title">NEW ARRIVALS</h2>
+          <p class="section-subtitle">The latest artisan drops from our workshop.</p>
           <div class="products-grid" id="new-arrivals-grid"></div>
         </div>
       </section>
@@ -187,7 +167,7 @@
         <div class="featured-grid">
           <div class="product-card">
             <div class="product-image">
-              <img src="image20.jpg" alt="Featured Shirt" />
+              <img src="image12.jpg" alt="Featured Shirt" />
             </div>
             <div class="product-info">
               <h3 class="product-name">Signature Tee</h3>
@@ -199,7 +179,7 @@
           </div>
           <div class="product-card">
             <div class="product-image">
-              <img src="image21.jpg" alt="Featured Pants" />
+              <img src="image17.jpg" alt="Featured Pants" />
             </div>
             <div class="product-info">
               <h3 class="product-name">Luxury Shorts</h3>
@@ -211,7 +191,7 @@
           </div>
           <div class="product-card">
             <div class="product-image">
-              <img src="image22.jpg" alt="Featured Shoes" />
+              <img src="image6.jpg" alt="Featured Shoes" />
             </div>
             <div class="product-info">
               <h3 class="product-name">Artisan Shoes</h3>
@@ -225,18 +205,19 @@
       </section>
 
       <section class="products-section" id="products">
-        <h2 class="section-title">COLLECTION</h2>
+        <h2 class="section-title">MADE TO BE WORN</h2>
+        <p class="section-subtitle">Minimal design. Premium materials. Timeless appeal.</p>
         <div class="products-grid" id="products-grid"></div>
       </section>
 
       <section class="hero all" id="home">
         <!--<img src="image.svg" alt="Classic Closet Image" class="all" />-->
-        <h1>ORDER IN SECONDS</h1>
-        <img src="image.svg" alt="Classic Closet Logo" class="all" />
-        <p>WHERE FASHION MEETS TASTE</p>
+        <h1 class="section-title">ORDER IN SECONDS</h1>
+        <img src="image14.jpg" alt="Classic Closet Logo" class="signup-cta-section" />
+        <p class="section-subtitle">WHERE FASHION MEETS TASTE</p>
       </section>
 
-      <section class="products-grid" id="products-grid">
+      <section class="signup-cta-section">
         <h2 class="section-title">COLLECTION</h2>
       </section>
     </main>
@@ -270,6 +251,22 @@
       </div>
     </div>
 
+    
+    <div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header">
+        <h3>YOUR BAG</h3>
+        <button onclick="closeCart()">BACK</button>
+    </div>
+    <div id="cart-items-container">
+        </div>
+    <div class="cart-footer">
+        <div class="total-row">
+            <span>TOTAL</span>
+            <span id="cart-total-amount">$0.00</span>
+        </div>
+        <button class="checkout-btn">PROCEED TO CHECKOUT</button>
+    </div>
+</div>
     <!-- Create Account Modal -->
     <div class="modal" id="createAccountModal">
       <div class="modal-content">
@@ -305,4 +302,4 @@
 
     <script src="script.js"></script>
   </body>
-</html>
+  </html>
