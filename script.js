@@ -1,339 +1,827 @@
-/**
- * CLASSIC CLOSET - CORE ENGINE
- * Organized for: Performance, Persistence, and Dynamic UI
- */
+/* =================================
+   PREMIUM CLOSET - ELITE JAVASCRIPT
+   ================================= */
 
-// 1. DATABASE: Centralized Product Information
-const products = [
-  { id: 1, name: "Premium Classic Tee", price: 45.0, desc: "100% Organic Egyptian Cotton", img: "image1.jpg" },
-  { id: 2, name: "Luxury Linen Shorts", price: 65.0, desc: "Breathable Italian tailored fit", img: "image2.jpg" },
-  { id: 3, name: "Artisan Leather Shoes", price: 120.0, desc: "Hand-stitched premium leather", img: "image3.jpg" },
-  { id: 4, name: "Heritage Wood Mask", price: 210.0, desc: "Hand-carved Ebony wood artifact", img: "image4.jpg" },
-  { id: 5, name: "Tribal Teak Sculpture", price: 180.0, desc: "Hand-carved African Teak", img: "image5.jpg" },
-  { id: 6, name: "Nomad Linen Shirt", price: 55.0, desc: "Sustainable flax fiber", img: "image6.jpg" },
-  { id: 7, name: "Ebony Bracelet Set", price: 35.0, desc: "Polished hardwood beads", img: "image7.jpg" },
-  { id: 8, name: "Savannah Fedora", price: 85.0, desc: "Hand-woven straw", img: "image8.jpg" },
-  { id: 9, name: "Dusk Cargo Pants", price: 95.0, desc: "Reinforced cotton twill", img: "image9.jpg" },
-  { id: 10, name: "Artisan Wood Comb", price: 25.0, desc: "Anti-static sandalwood", img: "image10.jpg" },
-  { id: 11, name: "Canvas Field Bag", price: 110.0, desc: "Water-resistant heavy canvas", img: "image11.jpg" },
-  { id: 12, name: "Desert Suede Boots", price: 155.0, desc: "Premium treated suede", img: "image12.jpg" },
-  { id: 13, name: "Sahara Silk Scarf", price: 40.0, desc: "Hand-printed natural silk", img: "image13.jpg" },
-  { id: 14, name: "Safari Vest", price: 130.0, desc: "Multi-pocket utility wear", img: "image14.jpg" },
-  { id: 15, name: "Indigo Dye Hoodie", price: 75.0, desc: "Natural vegetable dye", img: "image15.jpg" },
-  { id: 16, name: "Teak Serving Tray", price: 60.0, desc: "Single block carving", img: "image16.jpg" },
-  { id: 17, name: "Brass Motif Ring", price: 30.0, desc: "Recycled artisan brass", img: "image17.jpg" },
-  { id: 18, name: "Terracotta Vase", price: 50.0, desc: "Hand-thrown clay", img: "image18.jpg" },
-  { id: 19, name: "Woven Wall Hanging", price: 90.0, desc: "Traditional loom weave", img: "image19.jpg" }
+// --- STATE MANAGEMENT ---
+const state = {
+    cart: [],
+    currentPage: 'home',
+    user: null,
+    products: []
+};
+
+// --- PRODUCT DATA ---
+const productData = [
+    {
+        id: 1,
+        name: 'Signature Tee',
+        description: 'Premium organic cotton',
+        price: 45.00,
+        image: 'image12.jpg',
+        category: 'new',
+        badge: 'New'
+    },
+    {
+        id: 2,
+        name: 'Luxury Shorts',
+        description: 'Italian linen blend',
+        price: 65.00,
+        image: 'image17.jpg',
+        category: 'featured'
+    },
+    {
+        id: 3,
+        name: 'Artisan Shoes',
+        description: 'Hand-carved ebony details',
+        price: 120.00,
+        image: 'image6.jpg',
+        category: 'featured',
+        badge: 'Bestseller'
+    },
+    {
+        id: 4,
+        name: 'Heritage Jacket',
+        description: 'Wool blend with leather trim',
+        price: 285.00,
+        image: 'image12.jpg',
+        category: 'new',
+        badge: 'New'
+    },
+    {
+        id: 5,
+        name: 'Classic Denim',
+        description: 'Japanese selvedge denim',
+        price: 165.00,
+        image: 'image17.jpg',
+        category: 'collection'
+    },
+    {
+        id: 6,
+        name: 'Leather Belt',
+        description: 'Full-grain Italian leather',
+        price: 95.00,
+        image: 'image6.jpg',
+        category: 'collection'
+    },
+    {
+        id: 7,
+        name: 'Cashmere Sweater',
+        description: 'Mongolian cashmere',
+        price: 245.00,
+        image: 'image12.jpg',
+        category: 'collection',
+        badge: 'Bestseller'
+    },
+    {
+        id: 8,
+        name: 'Linen Shirt',
+        description: 'European linen',
+        price: 125.00,
+        image: 'image17.jpg',
+        category: 'new'
+    },
+    {
+        id: 9,
+        name: 'Wool Trousers',
+        description: 'Italian wool',
+        price: 185.00,
+        image: 'image6.jpg',
+        category: 'collection'
+    },
+    {
+        id: 10,
+        name: 'Canvas Bag',
+        description: 'Waxed canvas with leather',
+        price: 155.00,
+        image: 'image12.jpg',
+        category: 'sale',
+        originalPrice: 220.00
+    },
+    {
+        id: 11,
+        name: 'Silk Scarf',
+        description: 'Hand-printed silk',
+        price: 85.00,
+        image: 'image17.jpg',
+        category: 'sale',
+        originalPrice: 120.00
+    },
+    {
+        id: 12,
+        name: 'Leather Loafers',
+        description: 'Handcrafted in Italy',
+        price: 295.00,
+        image: 'image6.jpg',
+        category: 'collection',
+        badge: 'Bestseller'
+    }
 ];
 
-// 2. STATE MANAGEMENT
-let cart = [];
-
-/**
- * 3. INITIALIZATION
- * Runs all critical setup functions when the window loads
- */
-document.addEventListener("DOMContentLoaded", () => {
-    loadCart();             // Load saved items
-    renderProducts();       // Fill the main collection
-    renderNewArrivals();    // Fill arrivals section
-    renderSaleItems();      // Fill sale section
-    adjustContentSpacing(); // Set header offsets
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    state.products = productData;
+    initializeApp();
+    loadCartFromStorage();
+    renderAllProducts();
+    setupScrollEffects();
+    setupHeaderScroll();
+    adjustContentSpacing();
+    renderCraftContent()
     
-    // 2. SET LANDING PAGE STATE
-    // This forces the website to start at "Home" regardless of CSS defaults
-    goToHome();
-    
-    // Global Event Listeners
-    window.addEventListener("resize", adjustContentSpacing);
-    
-    // Close modals on outside click
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeModal(event.target.id);
-        }
-    };
+    // Re-adjust on window resize
+    window.addEventListener('resize', debounce(adjustContentSpacing, 250));
 });
 
-// --- 4. PERSISTENT CART LOGIC ---
-
-function loadCart() {
-    const savedCart = localStorage.getItem("classicClosetCart");
-    if (savedCart) {
-        cart = JSON.parse(savedCart);
-        updateCartDisplay();
-    }
-}
-
-function saveCart() {
-    localStorage.setItem("classicClosetCart", JSON.stringify(cart));
-}
-
-function addToCart(productId) {
-    const item = products.find((p) => p.id === productId);
-    if (item) {
-        const cartItem = { ...item, cartId: Date.now() + Math.random() };
-        cart.push(cartItem);
-        saveCart();
-        updateCartDisplay();
-        alert(`${item.name} added to your bag.`);
-    }
-}
-
-function removeFromCart(cartId) {
-    cart = cart.filter(item => item.cartId !== cartId);
-    saveCart();
-    updateCartDisplay();
-    showCart(); 
-}
-
-function updateCartDisplay() {
-    const counter = document.getElementById("cart-count");
-    if (counter) counter.innerText = cart.length;
-}
-
-function showCart() {
-    const sidebar = document.getElementById("cartSidebar");
-    const container = document.getElementById("cart-items-container");
-    const totalEl = document.getElementById("cart-total-amount");
+function initializeApp() {
+    console.log('🎨 Premium Closet Initialized');
+    updateCartCount();
     
-    container.innerHTML = ""; // Clear current view
-    
-    cart.forEach(item => {
-        container.innerHTML += `
-            <div class="cart-item-row">
-                <div>
-                    <p style="margin:0; font-size:0.8rem;">${item.name}</p>
-                    <small style="color:#888">$${item.price.toFixed(2)}</small>
-                </div>
-                <button class="remove-item" onclick="removeFromCart(${item.cartId})">REMOVE</button>
-            </div>
-        `;
-    });
-
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    totalEl.innerText = `$${total.toFixed(2)}`;
-    
-    sidebar.classList.add("active");
+    // Show home section by default
+    showSection('home');
 }
 
-function closeCart() {
-    document.getElementById("cartSidebar").classList.remove("active");
-}
-
-// --- 5. NAVIGATION SYSTEM ---
-
-function navigateTo(pageId) {
-    const homeSections = ["home", "signup-cta-section", "featured-drops-section", "all-image-section"];
-    const subPages = document.querySelectorAll(".sub-page, .products-section");
-
-    // Hide Home
-    homeSections.forEach(id => {
-        const el = document.getElementById(id) || document.querySelector("." + id);
-        if (el) el.style.display = "none";
-    });
-
-    // Hide all Sub-pages
-    subPages.forEach(page => page.style.display = "none");
-
-    // Show Target
-    const target = document.getElementById(pageId);
-    if (target) {
-        // Special case for the Products grid to maintain CSS layout
-        target.style.display = (pageId === "products" || target.classList.contains('products-grid')) ? "grid" : "block";
+// --- NAVIGATION ---
+function navigateTo(section) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.sub-page, .products-section, .hero-section, .featured-categories, .featured-section, .brand-values, .newsletter-section, .footer');
+    sections.forEach(s => s.style.display = 'none');
+    
+    // Show requested section
+    const targetSection = document.getElementById(section);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(adjustContentSpacing, 50); 
+    
+    // Update state
+    state.currentPage = section;
+    
+    // Render products for specific sections
+    if (section === 'products') {
+        renderProducts('products-grid', state.products);
+    } else if (section === 'new-arrivals') {
+        const newProducts = state.products.filter(p => p.category === 'new');
+        renderProducts('new-arrivals-grid', newProducts);
+    } else if (section === 'sale') {
+        const saleProducts = state.products.filter(p => p.category === 'sale');
+        renderProducts('sale-grid', saleProducts);
+    }
 }
 
 function goToHome() {
-    const homeSections = ["home", "signupCta", "featured-drops"];
-    const subPages = document.querySelectorAll(".sub-page, .products-section");
-
-    subPages.forEach(p => p.style.display = "none");
-    homeSections.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.style.display = (id === "featured-drops-section") ? "grid" : "block";
+    // Show all home sections
+    const homeSections = [
+        'home',
+        'featured-categories',
+        'featured-drops',
+        'brand-values',
+        'newsletter-section'
+    ];
+    
+    const allSections = document.querySelectorAll('.sub-page, .products-section');
+    allSections.forEach(s => s.style.display = 'none');
+    
+    homeSections.forEach(sectionId => {
+        const section = document.getElementById(sectionId) || document.querySelector('.' + sectionId);
+        if (section) {
+            section.style.display = 'block';
         }
     });
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(adjustContentSpacing, 50);
-}
-
-// --- 6. RENDER ENGINES ---
-
-function renderProducts() {
-    const grid = document.getElementById("products-grid");
-    if (!grid) return;
-    grid.innerHTML = products.map(product => createProductCard(product)).join("");
-}
-
-function renderSaleItems() {
-    const grid = document.getElementById("sale-grid");
-    if (!grid) return;
-    const saleItems = products.filter(p => p.price < 100);
-    grid.innerHTML = saleItems.map(p => createProductCard(p, true)).join("");
-}
-
-function renderNewArrivals() {
-    const grid = document.getElementById("new-arrivals-grid");
-    if (!grid) return;
-    const recentItems = products.slice(-3);
-    grid.innerHTML = recentItems.map(p => createProductCard(p)).join("");
-}
-
-// Helper to keep code DRY (Don't Repeat Yourself)
-function createProductCard(product, isSale = false) {
-    return `
-        <div class="product-card">
-            <div class="product-image"><img src="${product.img}" alt="${product.name}"></div>
-            <div class="product-info">
-                <h3 class="product-name">${product.name}</h3>
-                <span class="product-price" style="${isSale ? 'color: #ff4d4d;' : ''}">$${product.price.toFixed(2)}</span>
-                <button class="add-to-cart" onclick="addToCart(${product.id})">ADD TO BAG</button>
-            </div>
-        </div>`;
-}
-
-// --- 7. UI HELPERS & MODALS ---
-
-function adjustContentSpacing() {
-    const header = document.querySelector(".header");
-    if (!header) return;
     
-    const headerHeight = header.offsetHeight;
-    const sections = [
-        document.querySelector(".signup-cta-section"),
-        document.getElementById("featured-drops-section"),
-        document.querySelector(".main-content"),
-        ...document.querySelectorAll(".sub-page")
-    ];
+    document.querySelector('.hero-section').style.display = 'flex';
+    document.querySelector('.featured-categories').style.display = 'block';
+    document.querySelector('.featured-section').style.display = 'block';
+    document.querySelector('.brand-values').style.display = 'block';
+    document.querySelector('.newsletter-section').style.display = 'block';
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    state.currentPage = 'home';
+}
 
-    sections.forEach(el => { if(el) el.style.marginTop = "0"; });
-
-    // Apply margin only to the first visible element
-    for (let el of sections) {
-        if (el && window.getComputedStyle(el).display !== "none") {
-            el.style.marginTop = `${headerHeight}px`;
-            break; 
-        }
+function showSection(section) {
+    if (section === 'home') {
+        goToHome();
+    } else {
+        navigateTo(section);
     }
 }
 
+// --- PRODUCT RENDERING ---
+function renderAllProducts() {
+    // Render products grid (all products)
+    renderProducts('products-grid', state.products);
+}
+
+function renderProducts(containerId, products) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = products.map(product => `
+        <div class="product-card" data-product-id="${product.id}">
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.name}" />
+                ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+                <div class="product-overlay">
+                    <button class="quick-add" onclick="addToCart(${product.id})">Quick Add</button>
+                </div>
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">${product.name}</h3>
+                <p class="product-description">${product.description}</p>
+                ${product.originalPrice ? 
+                    `<span class="product-price">
+                        <span style="text-decoration: line-through; color: #666; margin-right: 10px;">$${product.originalPrice.toFixed(2)}</span>
+                        $${product.price.toFixed(2)}
+                    </span>` :
+                    `<span class="product-price">$${product.price.toFixed(2)}</span>`
+                }
+            </div>
+        </div>
+    `).join('');
+}
+
+
+/**
+ * RENDER CRAFT IMAGES
+ * Injects high-quality editorial images into the Our Craft section
+ */
+function renderCraftContent() {
+    const imageBoxes = document.querySelectorAll("#our-craft .craft-image-box");
+    
+    // Define your editorial images here
+    const craftImages = [
+        {
+            src: "fabric.jpg", 
+            alt: "Close up of premium organic cotton texture"
+        },
+        {
+            src: "bw.jpg", 
+            alt: "Minimalist fashion design studio"
+        }
+    ];
+
+    imageBoxes.forEach((box, index) => {
+        if (craftImages[index]) {
+            box.innerHTML = `
+                <img src="${craftImages[index].src}" 
+                     alt="${craftImages[index].alt}" 
+                     style="width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 1s ease-in-out;"
+                     onload="this.style.opacity='1'">
+            `;
+        }
+    });
+}
+
+// --- CART MANAGEMENT ---
+function addToCart(productId) {
+    const product = state.products.find(p => p.id === productId);
+    if (!product) return;
+    
+    // Check if product already in cart
+    const existingItem = state.cart.find(item => item.id === productId);
+    
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        state.cart.push({
+            ...product,
+            quantity: 1
+        });
+    }
+    
+    updateCartCount();
+    saveCartToStorage();
+    showCartNotification(product.name);
+    renderCartItems();
+}
+
+function removeFromCart(productId) {
+    state.cart = state.cart.filter(item => item.id !== productId);
+    updateCartCount();
+    saveCartToStorage();
+    renderCartItems();
+}
+
+function updateCartCount() {
+    const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = totalItems;
+        
+        // Add pulse animation
+        cartCountElement.style.transform = 'scale(1.3)';
+        setTimeout(() => {
+            cartCountElement.style.transform = 'scale(1)';
+        }, 200);
+    }
+}
+
+function renderCartItems() {
+    const container = document.getElementById('cart-items-container');
+    if (!container) return;
+    
+    if (state.cart.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; color: #666;">
+                <p style="font-size: 18px; margin-bottom: 10px;">Your bag is empty</p>
+                <p style="font-size: 14px;">Add some items to get started</p>
+            </div>
+        `;
+        updateCartTotal();
+        return;
+    }
+    
+    container.innerHTML = state.cart.map(item => `
+        <div class="cart-item-row">
+            <img src="${item.image}" alt="${item.name}" class="cart-item-image" />
+            <div class="cart-item-details">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                <div style="margin-top: 10px; color: #999; font-size: 13px;">Qty: ${item.quantity}</div>
+                <button class="remove-item" onclick="removeFromCart(${item.id})">Remove</button>
+            </div>
+        </div>
+    `).join('');
+    
+    updateCartTotal();
+}
+
+function updateCartTotal() {
+    const total = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const totalElement = document.getElementById('cart-total-amount');
+    if (totalElement) {
+        totalElement.textContent = `$${total.toFixed(2)}`;
+    }
+}
+
+function showCart() {
+    const cartSidebar = document.getElementById('cartSidebar');
+    if (cartSidebar) {
+        cartSidebar.classList.add('active');
+        renderCartItems();
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeCart() {
+    const cartSidebar = document.getElementById('cartSidebar');
+    if (cartSidebar) {
+        cartSidebar.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function handleCheckout() {
+    if (state.cart.length === 0) {
+        alert('Your cart is empty. Please add items before checking out.');
+        return;
+    }
+    
+    // Show notification
+    showNotification('Proceeding to secure checkout...', 'success');
+    
+    // In a real app, this would redirect to checkout
+    setTimeout(() => {
+        alert('Checkout functionality would be implemented here.\n\nTotal: $' + 
+              state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+    }, 500);
+}
+
+function showCartNotification(productName) {
+    showNotification(`${productName} added to bag`, 'success');
+}
+
+// --- STORAGE ---
+function saveCartToStorage() {
+    try {
+        localStorage.setItem('premiumClosetCart', JSON.stringify(state.cart));
+    } catch (e) {
+        console.error('Could not save cart:', e);
+    }
+}
+
+function loadCartFromStorage() {
+    try {
+        const saved = localStorage.getItem('premiumClosetCart');
+        if (saved) {
+            state.cart = JSON.parse(saved);
+            updateCartCount();
+        }
+    } catch (e) {
+        console.error('Could not load cart:', e);
+    }
+}
+
+// --- MODAL MANAGEMENT ---
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.style.display = "flex";
-        document.body.style.overflow = "hidden";
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
+        document.body.style.overflow = 'hidden';
     }
 }
 
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.style.display = "none";
-        document.body.style.overflow = "auto";
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 400);
     }
 }
 
-/**
- * SMOOTH MODAL TRANSITION
- * Switches content boxes without flicking the background overlay
- */
 function switchToCreateAccount() {
-  const signInModal = document.getElementById("signInModal");
-  const createModal = document.getElementById("createAccountModal");
-
-  // 1. Fade out the current content
-  signInModal.querySelector('.modal-content').style.opacity = "0";
-  signInModal.querySelector('.modal-content').style.transform = "translateY(-20px)";
-
-  setTimeout(() => {
-    signInModal.classList.remove("active");
-    signInModal.style.display = "none";
-
-    // 2. Prepare and Fade in the new content
-    createModal.style.display = "flex";
-    createModal.classList.add("active");
-    const content = createModal.querySelector('.modal-content');
-    content.style.opacity = "0";
-    content.style.transform = "translateY(20px)";
-    
-    // Force a reflow for the animation to trigger
-    content.offsetHeight; 
-    
-    content.style.opacity = "1";
-    content.style.transform = "translateY(0)";
-  }, 200); // Shorter duration for snappiness
+    closeModal('signInModal');
+    setTimeout(() => openModal('createAccountModal'), 100);
 }
 
 function switchToSignIn() {
-  const signInModal = document.getElementById("signInModal");
-  const createModal = document.getElementById("createAccountModal");
-
-  createModal.querySelector('.modal-content').style.opacity = "0";
-  createModal.querySelector('.modal-content').style.transform = "translateY(-20px)";
-
-  setTimeout(() => {
-    createModal.classList.remove("active");
-    createModal.style.display = "none";
-
-    signInModal.style.display = "flex";
-    signInModal.classList.add("active");
-    const content = signInModal.querySelector('.modal-content');
-    content.style.opacity = "0";
-    content.style.transform = "translateY(20px)";
-    
-    content.offsetHeight; 
-    
-    content.style.opacity = "1";
-    content.style.transform = "translateY(0)";
-  }, 200);
+    closeModal('createAccountModal');
+    setTimeout(() => openModal('signInModal'), 100);
 }
 
-// For the large "Join Now" banner button
 function openCreateModal() {
-  openModal("createAccountModal");
+    openModal('createAccountModal');
 }
 
-/**
- * MODAL ENGINE
- * Updated to handle .active classes or .style.display depending on your CSS
- */
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add("active"); // Trigger CSS animations
-        modal.style.display = "flex";  // Ensure visibility
-        document.body.style.overflow = "hidden"; // Prevent background scroll
-    }
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove("active");
-        setTimeout(() => {
-            modal.style.display = "none";
-        }, 300); // Match this to your CSS transition time
-        document.body.style.overflow = "auto";
-    }
-}
-
-
-
-// Form Submission Handlers
+// --- FORM HANDLERS ---
 function handleSignIn(event) {
     event.preventDefault();
-    closeModal("signInModal");
-    alert("Welcome back!");
+    
+    const email = document.getElementById('signin-email').value;
+    const password = document.getElementById('signin-password').value;
+    
+    // Simulate sign in
+    state.user = {
+        email: email,
+        name: email.split('@')[0]
+    };
+    
+    showNotification(`Welcome back, ${state.user.name}!`, 'success');
+    closeModal('signInModal');
+    
+    // Reset form
+    event.target.reset();
 }
 
 function handleCreateAccount(event) {
     event.preventDefault();
-    closeModal("createAccountModal");
-    alert("Account created!");
+    
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    
+    // Simulate account creation
+    state.user = {
+        name: name,
+        email: email
+    };
+    
+    showNotification(`Account created successfully! Welcome, ${name}!`, 'success');
+    closeModal('createAccountModal');
+    
+    // Reset form
+    event.target.reset();
 }
+
+function handleNewsletter(event) {
+    event.preventDefault();
+    
+    const email = event.target.querySelector('input[type="email"]').value;
+    
+    showNotification('Thank you for subscribing! Check your inbox for exclusive offers.', 'success');
+    
+    // Reset form
+    event.target.reset();
+}
+
+// --- SEARCH ---
+function toggleSearch() {
+    const searchOverlay = document.getElementById('searchOverlay');
+    if (searchOverlay) {
+        searchOverlay.classList.toggle('active');
+        
+        if (searchOverlay.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                searchOverlay.querySelector('.search-input')?.focus();
+            }, 100);
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }
+}
+
+// Close search on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const searchOverlay = document.getElementById('searchOverlay');
+        if (searchOverlay?.classList.contains('active')) {
+            toggleSearch();
+        }
+    }
+});
+
+// --- NOTIFICATIONS ---
+function showNotification(message, type = 'info') {
+    // Remove existing notification
+    const existing = document.querySelector('.notification-toast');
+    if (existing) {
+        existing.remove();
+    }
+    
+    // Create notification
+    const notification = document.createElement('div');
+    notification.className = `notification-toast notification-${type}`;
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 20px;">${type === 'success' ? '✓' : 'ℹ'}</span>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add styles
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '100px',
+        right: '20px',
+        background: type === 'success' ? '#d4af37' : '#333',
+        color: type === 'success' ? '#000' : '#fff',
+        padding: '16px 24px',
+        borderRadius: '4px',
+        zIndex: '9999',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+        animation: 'slideInRight 0.3s ease',
+        fontWeight: '500',
+        fontSize: '14px',
+        maxWidth: '400px'
+    });
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Add notification animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// --- SCROLL EFFECTS ---
+function setupScrollEffects() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe elements
+    const elementsToObserve = document.querySelectorAll('.product-card, .category-card, .value-item, .craft-card');
+    elementsToObserve.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+}
+
+function setupHeaderScroll() {
+    let lastScroll = 0;
+    const header = document.querySelector('.header');
+    
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll <= 0) {
+            header.style.boxShadow = 'none';
+        } else {
+            header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+        }
+        
+        // Hide header on scroll down, show on scroll up
+        if (currentScroll > lastScroll && currentScroll > 100) {
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            header.style.transform = 'translateY(0)';
+        }
+        
+        lastScroll = currentScroll;
+    });
+    
+    // Add transition to header
+    header.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+}
+
+// --- SMOOTH SCROLL FOR ANCHOR LINKS ---
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// --- IMAGE LAZY LOADING ---
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+    
+    // Observe all images with data-src
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+    });
+}
+
+// --- CONTENT SPACING ADJUSTMENT ---
+/**
+ * Dynamically adjusts main content spacing based on header height
+ * Ensures content never overlaps with fixed header
+ */
+function adjustContentSpacing() {
+    const header = document.querySelector('.header');
+    const announcementBar = document.querySelector('.announcement-bar');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (!header || !mainContent) {
+        console.warn('Header or main content not found');
+        return;
+    }
+    
+    // Calculate total header height (header + announcement bar if present)
+    let totalHeaderHeight = header.offsetHeight;
+    
+    if (announcementBar) {
+        totalHeaderHeight += announcementBar.offsetHeight;
+    }
+    
+    // Add a small buffer (optional, adjust as needed)
+    const buffer = 100; // You can change this to add extra space
+    
+    // Apply padding-top to main content
+    mainContent.style.paddingTop = `${totalHeaderHeight}px`;
+    
+  
+    
+    // Also adjust hero section if it exists
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+        heroSection.style.paddingTop = `${totalHeaderHeight}px`; // Extra spacing for hero
+    }
+    
+    // Adjust sub-pages
+    const subPages = document.querySelectorAll('.sub-page');
+    subPages.forEach(page => {
+        page.style.paddingTop = `${totalHeaderHeight - buffer}px`; // More space for sub-pages
+    });
+    
+    // Adjust products section
+    const productsSection = document.querySelector('.products-section');
+    if (productsSection) {
+        productsSection.style.paddingTop = `${totalHeaderHeight - buffer}px`;
+    }
+    
+    
+    
+    
+    // Log for debugging (remove in production)
+    console.log(`📏 Content spacing adjusted: ${totalHeaderHeight}px`);
+}
+
+// --- PERFORMANCE OPTIMIZATION ---
+// Debounce function for resize events
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Handle window resize
+window.addEventListener('resize', debounce(() => {
+    console.log('Window resized');
+    // Add any resize handlers here
+}, 250));
+
+// --- ACCESSIBILITY ---
+// Focus trap for modals
+function trapFocus(element) {
+    const focusableElements = element.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+    
+    element.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusable) {
+                    lastFocusable.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastFocusable) {
+                    firstFocusable.focus();
+                    e.preventDefault();
+                }
+            }
+        }
+    });
+}
+
+// Apply focus trap to modals when they open
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('transitionend', () => {
+        if (modal.classList.contains('active')) {
+            trapFocus(modal);
+        }
+    });
+});
+
+// --- ERROR HANDLING ---
+window.addEventListener('error', (e) => {
+    console.error('Error occurred:', e.error);
+});
+
+// --- CONSOLE STYLING ---
+console.log(
+    '%c🎨 Premium Closet ',
+    'background: #d4af37; color: #000; font-size: 20px; padding: 10px 20px; font-weight: bold;'
+);
+console.log(
+    '%cWhere Heritage Meets Modern Luxury',
+    'color: #d4af37; font-size: 14px; font-style: italic;'
+);
+
+// Export functions for global use
+window.navigateTo = navigateTo;
+window.goToHome = goToHome;
+window.addToCart = addToCart;
+window.removeFromCart = removeFromCart;
+window.showCart = showCart;
+window.closeCart = closeCart;
+window.handleCheckout = handleCheckout;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.switchToCreateAccount = switchToCreateAccount;
+window.switchToSignIn = switchToSignIn;
+window.openCreateModal = openCreateModal;
+window.handleSignIn = handleSignIn;
+window.handleCreateAccount = handleCreateAccount;
+window.handleNewsletter = handleNewsletter;
+window.toggleSearch = toggleSearch;
