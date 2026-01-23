@@ -3,246 +3,475 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Classic Closet - Cool Fashion</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Classic Closet - Artisan Fashion & Heritage Craft</title>
+    <link rel="stylesheet" href="closet6.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
 
   <body>
-    <div>
-      
+
+
+    <!-- Header -->
+
       <header class="header">
-  <div class="header-inner">
-    <div class="header-top">
-      <div class="logo-wrapper" onclick="goToHome()">
-        <img src="logo1.png" alt="Classic Closet" class="logo" />
+      <div class="header-inner">
+        <div class="header-top">
+          <div class="logo-wrapper" onclick="goToHome()">
+            <div class="logo-brand">
+              <span class="logo-icon">𝒞𝒞</span>
+              <div class="logo-text">
+                <span class="logo-name">CLASSIC CLOSET</span>
+                <span class="logo-tagline">COOL FASHION</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="header-actions">
+            <button class="btn-icon" onclick="toggleSearch()">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="9" cy="9" r="7"/>
+                <path d="M14 14l5 5"/>
+              </svg>
+            </button>
+            <button class="btn-icon btn-signin" onclick="openModal('signInModal')">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="7" r="4"/>
+                <path d="M3 20v-2c0-2.2 1.8-4 4-4h6c2.2 0 4 1.8 4 4v2"/>
+              </svg>
+            </button>
+            <button class="btn-cart" onclick="showCart()">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+              <span class="cart-count-badge" id="cart-count">0</span>
+            </button>
+          </div>
+        </div>
+
+        <nav class="header-nav-bar">
+          <ul class="nav-links">
+            <li><a href="#" onclick="navigateTo('new-arrivals')">New Arrivals</a></li>
+            <li><a href="#" onclick="navigateTo('products')">Collection</a></li>
+            <li><a href="#" onclick="navigateTo('our-craft')">Our Craft</a></li>
+            <li><a href="#" onclick="navigateTo('lookbook')">Lookbook</a></li>
+            <li><a href="#" onclick="navigateTo('sale')" class="sale-link">Sale</a></li>
+          </ul>
+        </nav>
       </div>
       
-      <div class="header-actions">
-        <button class="btn-icon btn-signin" onclick="openModal('signInModal')">
-          <span class="btn-text">MEMBER SIGN IN</span>
-        </button>
-        <button class="btn-cart" onclick="showCart()">
-          <span class="cart-label">BAG</span>
-          <span class="cart-count-badge" id="cart-count">0</span>
-        </button>
+
+    </header>
+    
+             <!--Announcement Bar -->
+    <div class="announcement-bar">
+      <p>NEW SEASON COLLECTION • COMPLIMENTARY SHIPPING ON ORDERS OVER $200</p>
+    </div>
+    
+              <!-- Search Overlay -->
+    <div class="search-overlay" id="searchOverlay">
+      <div class="search-container">
+        <input type="text" placeholder="Search for products..." class="search-input" />
+        <button class="search-close" onclick="toggleSearch()">×</button>
       </div>
     </div>
 
-    <div class="header-nav-bar">
-      <ul class="nav-links">
-        <li><a href="#" onclick="goToHome('home')">HOME</a></li>
-        <li><a href="#" onclick="navigateTo('new-arrivals')">NEW</a></li>
-        <li><a href="#" onclick="navigateTo('products')">COLLECTION</a></li>
-        <li><a href="#" onclick="navigateTo('our-craft')">ABOUT</a></li>
-        
-      </ul>
-    </div>
-  </div>
-</header>
-      
-      
-      
-    </div>
 
-    <section class="signup-cta-section" id="signupCta">
-      <div class="cta-content">
-        <h2>Member Access</h2>
-        <p>Unlock early drops & artisan carvings.</p>
-        <button class="btn-create-account" onclick="openCreateModal()">
-          Join Now
-        </button>
-      </div>
-    </section>
+    
+    
+
 
     <main class="main-content">
-      <section id="sale" class="sub-page" style="display: none">
-        <div class="content-wrapper">
-          <h2>SEASONAL SALE</h2>
-          <p>Premium artisan pieces at exclusive prices.</p>
-          <div class="products-grid" id="sale-grid"></div>
+      <!-- Hero Section -->
+      <section class="hero-section" id="home">
+        <div class="hero-content">
+          <span class="hero-subtitle">Spring/Summer 2026</span>
+          <h1 class="hero-title">Where Heritage<br/>Meets Modern Luxury</h1>
+          <p class="hero-description">Artisan-crafted fashion and wood carvings from<br/>sustainably sourced materials</p>
+          <div class="hero-cta">
+            <button class="btn-primary" onclick="navigateTo('products')">Explore Collection</button>
+            <button class="btn-secondary" onclick="navigateTo('our-craft')">Our Story</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="image14.jpg" alt="Classic Closet Collection" />
         </div>
       </section>
 
+      <!-- Featured Categories -->
+      <section class="featured-categories" id="featured-category">
+        <div class="content-wrapper">
+          <div class="category-grid">
+            <div class="category-card" onclick="navigateTo('products')">
+              <div class="category-image">
+                <img src="image12.jpg" alt="Ready to Wear" />
+              </div>
+              <div class="category-overlay">
+                <h3>Ready to Wear</h3>
+                <span class="category-link">Shop Now →</span>
+              </div>
+            </div>
+            <div class="category-card" onclick="navigateTo('products')">
+              <div class="category-image">
+                <img src="image17.jpg" alt="Artisan Accessories" />
+              </div>
+              <div class="category-overlay">
+                <h3>Artisan Accessories</h3>
+                <span class="category-link">Shop Now →</span>
+              </div>
+            </div>
+            <div class="category-card" onclick="navigateTo('products')">
+              <div class="category-image">
+                <img src="image6.jpg" alt="Heritage Collection" />
+              </div>
+              <div class="category-overlay">
+                <h3>Heritage Collection</h3>
+                <span class="category-link">Shop Now →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      
+      <!-- Featured Products -->
+      <section id="featured-drops" class="featured-section">
+        <div class="content-wrapper">
+          <div class="section-header">
+            <h2 class="section-title">Curated Selection</h2>
+            <p class="section-subtitle">Handpicked pieces from our latest collection</p>
+          </div>
+          <div class="featured-grid">
+            <div class="product-card">
+              <div class="product-image">
+                <img src="image12.jpg" alt="Signature Tee" />
+                <div class="product-badge">New</div>
+                <div class="product-overlay">
+                  <button class="quick-add" onclick="addToCart(1)">Quick Add</button>
+                </div>
+              </div>
+              <div class="product-info">
+                <h3 class="product-name">Signature Tee</h3>
+                <p class="product-description">Premium organic cotton</p>
+                <span class="product-price">$45.00</span>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-image">
+                <img src="image17.jpg" alt="Luxury Shorts" />
+                <div class="product-overlay">
+                  <button class="quick-add" onclick="addToCart(2)">Quick Add</button>
+                </div>
+              </div>
+              <div class="product-info">
+                <h3 class="product-name">Luxury Shorts</h3>
+                <p class="product-description">Italian linen blend</p>
+                <span class="product-price">$65.00</span>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-image">
+                <img src="image6.jpg" alt="Artisan Shoes" />
+                <div class="product-badge">Bestseller</div>
+                <div class="product-overlay">
+                  <button class="quick-add" onclick="addToCart(3)">Quick Add</button>
+                </div>
+              </div>
+              <div class="product-info">
+                <h3 class="product-name">Artisan Shoes</h3>
+                <p class="product-description">Hand-carved ebony details</p>
+                <span class="product-price">$120.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Brand Values -->
+      <section class="brand-values" id="brand-values">
+        <div class="content-wrapper">
+          <div class="values-grid">
+            <div class="value-item">
+              <div class="value-icon">🌍</div>
+              <h4>Sustainable</h4>
+              <p>Ethically sourced materials from protected woodlands</p>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">✂️</div>
+              <h4>Handcrafted</h4>
+              <p>Every piece made by skilled artisan hands</p>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">♻️</div>
+              <h4>Timeless</h4>
+              <p>Designed to last generations, not seasons</p>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">📦</div>
+              <h4>Premium Service</h4>
+              <p>White-glove delivery and lifetime support</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter -->
+      <section class="newsletter-section" id="newsletter-section">
+        <div class="content-wrapper">
+          <div class="newsletter-content">
+            <h2>Join the Heritage Circle</h2>
+            <p>Exclusive access to new collections, artisan stories, and special events</p>
+            <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+              <input type="email" placeholder="Enter your email" required />
+              <button type="submit" class="btn-primary">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- All Products Section -->
+      <section class="products-section" id="products" style="display: none;">
+        <div class="content-wrapper">
+          <div class="section-header">
+            <h2 class="section-title">The Collection</h2>
+            <p class="section-subtitle">Minimal design. Premium materials. Timeless appeal.</p>
+          </div>
+          <div class="products-grid" id="products-grid"></div>
+        </div>
+      </section>
+
+      <!-- New Arrivals -->
       <section id="new-arrivals" class="sub-page" style="display: none">
         <div class="content-wrapper">
-          <h2 class="section-title">NEW ARRIVALS</h2>
-          <p class="section-subtitle">The latest artisan drops from our workshop.</p>
+          <div class="section-header">
+            <h2 class="section-title">New Arrivals</h2>
+            <p class="section-subtitle">The latest artisan drops from our workshop</p>
+          </div>
           <div class="products-grid" id="new-arrivals-grid"></div>
         </div>
       </section>
 
+      <!-- Sale -->
+      <section id="sale" class="sub-page" style="display: none">
+        <div class="content-wrapper">
+          <div class="section-header">
+            <h2 class="section-title">Seasonal Sale</h2>
+            <p class="section-subtitle">Premium artisan pieces at exclusive prices</p>
+          </div>
+          <div class="products-grid" id="sale-grid"></div>
+        </div>
+      </section>
+
+      <!-- Our Craft -->
       <section id="our-craft" class="sub-page" style="display: none">
         <div class="content-wrapper">
-          <h2>ARTISAN MASTERY</h2>
-          <div class="craft-grid">
-            <div class="craft-card">
-              <div class="craft-img-placeholder">🪵</div>
-              <h3>Sustainably Sourced</h3>
-              <p>
-                Every piece of Ebony and Teak is ethically harvested from
-                protected African woodlands.
-              </p>
+          <div class="craft-header">
+            <span class="eyebrow">THE ATELIA</span>
+            <h2>THE ART OF PRECISION</h2>
+            <p class="intro-text">We believe in clothes that last a decade, not a season. Our craft is rooted in the pursuit of the perfect silhouette and the finest raw materials.</p>
             </div>
-            <div class="craft-card">
-              <div class="craft-img-placeholder">🪚</div>
-              <h3>Hand-Carved</h3>
-              <p>
-                No machines. Just iron tools and decades of passed-down carving
-                heritage.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section id="fit-guide" class="sub-page" style="display: none">
-        <div class="content-wrapper">
-          <h2>FIT & CARE</h2>
-          <table class="size-table">
-            <tr>
-              <th>Size</th>
-              <th>Chest (in)</th>
-              <th>Length (in)</th>
-            </tr>
-            <tr>
-              <td>S</td>
-              <td>36-38</td>
-              <td>27</td>
-            </tr>
-            <tr>
-              <td>M</td>
-              <td>39-41</td>
-              <td>28</td>
-            </tr>
-            <tr>
-              <td>L</td>
-              <td>42-44</td>
-              <td>29</td>
-            </tr>
-          </table>
-          <div class="care-tips">
-            <p><strong>Clothing:</strong> Wash cold, hang dry.</p>
-            <p>
-              <strong>Wood:</strong> Polish with natural beeswax every 6 months.
-            </p>
-          </div>
-        </div>
-      </section>
+    <div class="craft-row">
+      <div class="craft-image-box">
+        <div class="placeholder-img">FABRIC FOCUS</div>
+      </div>
+      <div class="craft-text-box">
+        <h3>01. NOBLE MATERIALS</h3>
+        <p>From GIZA organic cotton to Italian-spun linen, we source fabrics that breathe with you. Every roll of cloth is inspected for weight, drape, and tensile strength before it reaches the cutting table.</p>
+      </div>
+    </div>
 
+    <div class="craft-row reverse">
+      <div class="craft-text-box">
+        <h3>02. ARCHITECTURAL CUT</h3>
+        <p>A garment is only as good as its pattern. Our master tailors spend months refining our "Classic Fit"—a balance of structural shoulders and a relaxed drape that flatters every form.</p>
+      </div>
+      <div class="craft-image-box">
+        <div class="placeholder-img">THE SILHOUETTE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- Lookbook -->
       <section id="lookbook" class="sub-page" style="display: none">
         <div class="content-wrapper">
-          <h2>COMMUNITY LOOKBOOK</h2>
+          <div class="section-header">
+            <h2 class="section-title">Community Lookbook</h2>
+            <p class="section-subtitle">Style inspiration from our global community</p>
+          </div>
           <div class="lookbook-grid">
-            <div class="lookbook-item">📸 @ClassicUser1</div>
-            <div class="lookbook-item">📸 @ClosetStyle</div>
+            <div class="lookbook-item">
+              <div class="lookbook-image">📸</div>
+              <p>@ClassicUser1</p>
+            </div>
+            <div class="lookbook-item">
+              <div class="lookbook-image">📸</div>
+              <p>@ClosetStyle</p>
+            </div>
           </div>
         </div>
       </section>
 
+      <!-- Fit Guide -->
+      <section id="fit-guide" class="sub-page" style="display: none">
+        <div class="content-wrapper">
+          <h2 class="section-title">Size & Care Guide</h2>
+          <div class="guide-content">
+            <div class="size-guide">
+              <h3>Sizing Chart</h3>
+              <table class="size-table">
+                <thead>
+                  <tr>
+                    <th>Size</th>
+                    <th>Chest (in)</th>
+                    <th>Length (in)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>S</td>
+                    <td>36-38</td>
+                    <td>27</td>
+                  </tr>
+                  <tr>
+                    <td>M</td>
+                    <td>39-41</td>
+                    <td>28</td>
+                  </tr>
+                  <tr>
+                    <td>L</td>
+                    <td>42-44</td>
+                    <td>29</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="care-guide">
+              <h3>Care Instructions</h3>
+              <div class="care-tips">
+                <div class="care-item">
+                  <strong>Clothing:</strong>
+                  <p>Wash cold, hang dry. Iron on low heat if needed.</p>
+                </div>
+                <div class="care-item">
+                  <strong>Wood Pieces:</strong>
+                  <p>Polish with natural beeswax every 6 months. Keep away from direct sunlight.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shipping -->
       <section id="shipping" class="sub-page" style="display: none">
         <div class="content-wrapper">
-          <h2>SHIPPING & RETURNS</h2>
-          <div class="faq-item">
-            <h4>How long is delivery?</h4>
-            <p>
-              5-7 business days for fashion. 14 days for custom wood carvings.
-            </p>
-          </div>
-          <div class="faq-item">
-            <h4>Return Policy?</h4>
-            <p>
-              30-day returns on unworn clothing. Wood carvings are final sale.
-            </p>
-          </div>
-        </div>
-      </section>
-
-    
-
-
-      <section id="featured-drops" class="featured-row-section">
-        <h2 class="section-title">FEATURED DROPS</h2>
-        <div class="featured-grid">
-          <div class="product-card">
-            <div class="product-image">
-              <img src="image12.jpg" alt="Featured Shirt" />
+          <h2 class="section-title">Shipping & Returns</h2>
+          <div class="faq-container">
+            <div class="faq-item">
+              <h4>How long is delivery?</h4>
+              <p>5-7 business days for fashion items. 14 days for custom wood carvings. Complimentary shipping on orders over $200.</p>
             </div>
-            <div class="product-info">
-              <h3 class="product-name">Signature Tee</h3>
-              <span class="product-price">$45.00</span>
-              <button class="add-to-cart" onclick="addToCart(1)">
-                ADD TO BAG
-              </button>
+            <div class="faq-item">
+              <h4>What is your return policy?</h4>
+              <p>30-day returns on unworn clothing with original tags. Wood carvings are final sale due to their custom nature.</p>
             </div>
-          </div>
-          <div class="product-card">
-            <div class="product-image">
-              <img src="image17.jpg" alt="Featured Pants" />
-            </div>
-            <div class="product-info">
-              <h3 class="product-name">Luxury Shorts</h3>
-              <span class="product-price">$65.00</span>
-              <button class="add-to-cart" onclick="addToCart(2)">
-                ADD TO BAG
-              </button>
-            </div>
-          </div>
-          <div class="product-card">
-            <div class="product-image">
-              <img src="image6.jpg" alt="Featured Shoes" />
-            </div>
-            <div class="product-info">
-              <h3 class="product-name">Artisan Shoes</h3>
-              <span class="product-price">$120.00</span>
-              <button class="add-to-cart" onclick="addToCart(3)">
-                ADD TO BAG
-              </button>
+            <div class="faq-item">
+              <h4>Do you ship internationally?</h4>
+              <p>Yes, we ship worldwide. International duties and taxes may apply.</p>
             </div>
           </div>
         </div>
-      </section>
-
-      <section class="products-section" id="products">
-        <h2 class="section-title">MADE TO BE WORN</h2>
-        <p class="section-subtitle">Minimal design. Premium materials. Timeless appeal.</p>
-        <div class="products-grid" id="products-grid"></div>
-      </section>
-
-      <section class="hero all" id="home">
-        <!--<img src="image.svg" alt="Classic Closet Image" class="all" />-->
-        <h1 class="section-title">ORDER IN SECONDS</h1>
-        <img src="image14.jpg" alt="Classic Closet Logo" class="signup-cta-section" />
-        <p class="section-subtitle">WHERE FASHION MEETS TASTE</p>
-      </section>
-
-      <section class="signup-cta-section">
-        <h2 class="section-title">COLLECTION</h2>
       </section>
     </main>
 
+    <!-- Footer -->
     <footer class="footer">
-      <p>© 2026 Classic Closet. All rights reserved.</p>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Customer Care</h4>
+          <ul>
+            <li><a href="#" onclick="navigateTo('shipping')">Shipping & Returns</a></li>
+            <li><a href="#" onclick="navigateTo('fit-guide')">Size Guide</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>About</h4>
+          <ul>
+            <li><a href="#" onclick="navigateTo('our-craft')">Our Story</a></li>
+            <li><a href="#">Sustainability</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Pinterest</a></li>
+            <li><a href="#">Twitter</a></li>
+            <li><a href="#">Facebook</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Newsletter</h4>
+          <p>Join for exclusive access to new collections</p>
+          <form class="footer-newsletter" onsubmit="handleNewsletter(event)">
+            <input type="email" placeholder="Your email" required />
+            <button type="submit">→</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Classic Closet. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
     </footer>
 
-    <!-- Sign In Modal -->
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+      <div class="cart-header">
+        <h3>Shopping Bag</h3>
+        <button class="cart-close" onclick="closeCart()">×</button>
+      </div>
+      <div id="cart-items-container" class="cart-items"></div>
+      <div class="cart-footer">
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="cart-total-amount">$0.00</span>
+          </div>
+          <p class="shipping-note">Shipping calculated at checkout</p>
+        </div>
+        <button class="checkout-btn" onclick="handleCheckout()">Proceed to Checkout</button>
+        <button class="continue-shopping" onclick="closeCart()">Continue Shopping</button>
+      </div>
+    </div>
+
+    <!-- Modals -->
     <div class="modal" id="signInModal">
+      <div class="modal-backdrop" onclick="closeModal('signInModal')"></div>
       <div class="modal-content">
-        <button class="modal-close" onclick="closeModal('signInModal')">
-          &times;
-        </button>
-        <h2>SIGN IN</h2>
+        <button class="modal-close" onclick="closeModal('signInModal')">×</button>
+        <h2>Welcome Back</h2>
         <form onsubmit="handleSignIn(event)">
           <div class="form-group">
-            <label for="signin-email">EMAIL</label>
+            <label for="signin-email">Email Address</label>
             <input type="email" id="signin-email" required />
           </div>
           <div class="form-group">
-            <label for="signin-password">PASSWORD</label>
+            <label for="signin-password">Password</label>
             <input type="password" id="signin-password" required />
           </div>
-          <button type="submit" class="submit-btn">SIGN IN</button>
+          <button type="submit" class="submit-btn">Sign In</button>
           <div class="form-footer">
             Don't have an account?
             <a onclick="switchToCreateAccount()">Create one</a>
@@ -251,48 +480,25 @@
       </div>
     </div>
 
-    
-    <div id="cartSidebar" class="cart-sidebar">
-    <div class="cart-header">
-        <h3>YOUR BAG</h3>
-        <button onclick="closeCart()">BACK</button>
-    </div>
-    <div id="cart-items-container">
-        </div>
-    <div class="cart-footer">
-        <div class="total-row">
-            <span>TOTAL</span>
-            <span id="cart-total-amount">$0.00</span>
-        </div>
-        <button class="checkout-btn">PROCEED TO CHECKOUT</button>
-    </div>
-</div>
-    <!-- Create Account Modal -->
     <div class="modal" id="createAccountModal">
+      <div class="modal-backdrop" onclick="closeModal('createAccountModal')"></div>
       <div class="modal-content">
-        <button class="modal-close" onclick="closeModal('createAccountModal')">
-          &times;
-        </button>
-        <h2>CREATE ACCOUNT</h2>
+        <button class="modal-close" onclick="closeModal('createAccountModal')">×</button>
+        <h2>Create Account</h2>
         <form onsubmit="handleCreateAccount(event)">
           <div class="form-group">
-            <label for="signup-name">FULL NAME</label>
+            <label for="signup-name">Full Name</label>
             <input type="text" id="signup-name" required />
           </div>
           <div class="form-group">
-            <label for="signup-email">EMAIL</label>
+            <label for="signup-email">Email Address</label>
             <input type="email" id="signup-email" required />
           </div>
           <div class="form-group">
-            <label for="signup-password">PASSWORD</label>
-            <input
-              type="password"
-              id="signup-password"
-              required
-              minlength="6"
-            />
+            <label for="signup-password">Password</label>
+            <input type="password" id="signup-password" required minlength="6" />
           </div>
-          <button type="submit" class="submit-btn">CREATE ACCOUNT</button>
+          <button type="submit" class="submit-btn">Create Account</button>
           <div class="form-footer">
             Already have an account? <a onclick="switchToSignIn()">Sign in</a>
           </div>
@@ -300,6 +506,8 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="closet.js"></script>
   </body>
-  </html>
+</html>
+
+    
