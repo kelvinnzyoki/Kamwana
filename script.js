@@ -8,7 +8,7 @@
 // ==========================================
 const API_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3000' 
-  : 'https://your-backend-url.vercel.app'; // CHANGE THIS TO YOUR ACTUAL BACKEND URL
+  : 'https://cc.cctamcc.site'; // CHANGE THIS TO YOUR ACTUAL BACKEND URL
 
 // ==========================================
 // STATE MANAGEMENT
