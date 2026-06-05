@@ -1,0 +1,4 @@
+@tailwind base; @tailwind components; @tailwind utilities;
+:root { --background: 42 40% 98%; --foreground: 220 20% 10%; --card: 0 0% 100%; --muted: 220 14% 94%; --border: 220 13% 88%; --primary: 43 74% 49%; --primary-foreground: 220 20% 10%; }
+.dark { --background: 220 20% 6%; --foreground: 42 40% 96%; --card: 220 18% 10%; --muted: 220 16% 16%; --border: 220 14% 22%; --primary: 43 74% 49%; --primary-foreground: 220 20% 8%; }
+body { background:hsl(var(--background)); color:hsl(var(--foreground)); }
