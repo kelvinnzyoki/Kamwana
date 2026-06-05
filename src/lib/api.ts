@@ -5,7 +5,7 @@ const API_URL =
     ? rawApiUrl.replace(/\/$/, "")
     : `https://${rawApiUrl.replace(/\/$/, "")}`;
 
-export async function apiFetch<T>(
+async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
@@ -13,6 +13,7 @@ export async function apiFetch<T>(
 
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {})
@@ -20,13 +21,87 @@ export async function apiFetch<T>(
     cache: "no-store"
   });
 
-  if (!res.ok) {
-    const text = await res.text();
+  const data = await res.json().catch(() => ({}));
 
-    throw new Error(
-      `API request failed: ${res.status} ${res.statusText} - ${text}`
-    );
+  if (!res.ok) {
+    throw new Error(data.message || `API request failed: ${res.status}`);
   }
 
-  return res.json() as Promise<T>;
+  return data as T;
 }
+
+export async function apiFetch<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  return request<T>(path, options);
+}
+
+export const api = {
+  products: (q = "") => request<any>(`/api/products${q}`),
+
+  product: (slug: string) => request<any>(`/api/products/${slug}`),
+
+  register: (body: any) =>
+    request<any>("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify(body)
+    }),
+
+  login: (body: any) =>
+    request<any>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(body)
+    }),
+
+  me: () => request<any>("/api/auth/me"),
+
+  logout: () =>
+    request<any>("/api/auth/logout", {
+      method: "POST"
+    }),
+
+  cart: () => request<any>("/api/cart"),
+
+  addCart: (productId: string, quantity = 1) =>
+    request<any>("/api/cart/items", {
+      method: "POST",
+      body: JSON.stringify({ productId, quantity })
+    }),
+
+  updateCart: (id: string, quantity: number) =>
+    request<any>(`/api/cart/items/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ quantity })
+    }),
+
+  removeCart: (id: string) =>
+    request<any>(`/api/cart/items/${id}`, {
+      method: "DELETE"
+    }),
+
+  checkout: (body: any) =>
+    request<any>("/api/checkout", {
+      method: "POST",
+      body: JSON.stringify(body)
+    }),
+
+  paystack: (orderId: string) =>
+    request<any>(`/api/payments/paystack/initialize/${orderId}`, {
+      method: "POST"
+    }),
+
+  mpesa: (orderId: string, phoneNumber: string) =>
+    request<any>(`/api/payments/mpesa/stk/${orderId}`, {
+      method: "POST",
+      body: JSON.stringify({ phoneNumber })
+    }),
+
+  orders: () => request<any>("/api/orders/mine"),
+
+  newsletter: (email: string) =>
+    request<any>("/api/newsletter/subscribe", {
+      method: "POST",
+      body: JSON.stringify({ email })
+    })
+};
