@@ -1,0 +1,8 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+async function request<T>(path:string, options:RequestInit={}){ const res=await fetch(`${API_URL}${path}`,{...options,credentials:'include',headers:{'Content-Type':'application/json',...(options.headers||{})}}); const data=await res.json().catch(()=>({})); if(!res.ok) throw new Error(data.message || 'Request failed'); return data as T; }
+export const api={
+  products:(q='')=>request<any>(`/api/products${q}`), product:(slug:string)=>request<any>(`/api/products/${slug}`),
+  register:(body:any)=>request<any>('/api/auth/register',{method:'POST',body:JSON.stringify(body)}), login:(body:any)=>request<any>('/api/auth/login',{method:'POST',body:JSON.stringify(body)}), me:()=>request<any>('/api/auth/me'), logout:()=>request<any>('/api/auth/logout',{method:'POST'}),
+  cart:()=>request<any>('/api/cart'), addCart:(productId:string,quantity=1)=>request<any>('/api/cart/items',{method:'POST',body:JSON.stringify({productId,quantity})}), updateCart:(id:string,quantity:number)=>request<any>(`/api/cart/items/${id}`,{method:'PATCH',body:JSON.stringify({quantity})}), removeCart:(id:string)=>request<any>(`/api/cart/items/${id}`,{method:'DELETE'}),
+  checkout:(body:any)=>request<any>('/api/checkout',{method:'POST',body:JSON.stringify(body)}), paystack:(orderId:string)=>request<any>(`/api/payments/paystack/initialize/${orderId}`,{method:'POST'}), mpesa:(orderId:string,phoneNumber:string)=>request<any>(`/api/payments/mpesa/stk/${orderId}`,{method:'POST',body:JSON.stringify({phoneNumber})}), orders:()=>request<any>('/api/orders/mine'), newsletter:(email:string)=>request<any>('/api/newsletter/subscribe',{method:'POST',body:JSON.stringify({email})})
+};
