@@ -1,0 +1,3 @@
+'use client';
+import { useQuery } from '@tanstack/react-query'; import { api } from '@/lib/api'; import { money } from '@/lib/money';
+export default function Orders(){ const {data,isLoading}=useQuery({queryKey:['orders'],queryFn:api.orders,retry:false}); if(isLoading)return <p className="p-8">Loading...</p>; const orders=data?.data?.orders??[]; return <section className="mx-auto max-w-5xl px-4 py-10"><h1 className="mb-6 text-4xl font-bold">My Orders</h1><div className="space-y-4">{orders.map((o:any)=><div key={o.id} className="rounded-2xl border border-border p-5"><div className="flex justify-between"><b>{o.orderNumber}</b><span>{o.status}</span></div><p>{money(o.total)}</p></div>)}</div></section> }
