@@ -41,12 +41,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...(options.headers as Record<string, string> | undefined),
   };
 
-  const res = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    credentials: 'include',
-    headers,
-    cache: 'no-store',
-  });
+  const isServer = typeof window === 'undefined';
+
+const res = await fetch(`${API_URL}${endpoint}`, {
+  ...options,
+  credentials: 'include',
+  headers,
+  ...(isServer
+    ? { next: { revalidate: 60 } }
+    : { cache: 'no-store' }),
+});
 
   const data = await res.json().catch(() => ({}));
 
