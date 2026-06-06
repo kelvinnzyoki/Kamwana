@@ -12,40 +12,47 @@ export function ProductCard({ p }: { p: Product }) {
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
 
-  const add = useMutation({
+  const addToCart = useMutation({
     mutationFn: () => api.addCart(p.id, 1),
-    onSuccess: () => {
+    onSuccess: async () => {
       setMessage('Added');
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-      setTimeout(() => setMessage(''), 1200);
+      await queryClient.invalidateQueries({ queryKey: ['cart'] });
+      setTimeout(() => setMessage(''), 1400);
     },
-    onError: (err: any) => {
-      setMessage(err?.message || 'Failed');
-      setTimeout(() => setMessage(''), 2000);
+    onError: (error: any) => {
+      setMessage(error?.message || 'Failed');
+      setTimeout(() => setMessage(''), 2500);
     },
   });
 
   return (
     <article className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
-      <Link href={`/product/${p.slug}`}>
+      <Link href={`/product/${p.slug}`} className="block">
         <div className="relative aspect-[4/5]">
           <Image src={p.image} alt={p.name} fill className="object-cover" />
         </div>
       </Link>
 
-      <div className="space-y-2 p-4">
-        <h3 className="font-semibold">{p.name}</h3>
+      <div className="space-y-3 p-4">
+        <Link href={`/product/${p.slug}`} className="block">
+          <h3 className="font-semibold hover:underline">{p.name}</h3>
+        </Link>
+
         <p className="line-clamp-2 text-sm opacity-70">{p.description}</p>
 
         <div className="flex items-center justify-between gap-3">
           <b>{money(Number(p.price))}</b>
           <button
             type="button"
-            disabled={add.isPending}
-            onClick={() => add.mutate()}
-            className="rounded-full bg-foreground px-4 py-2 text-sm text-background disabled:opacity-60"
+            disabled={addToCart.isPending}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              addToCart.mutate();
+            }}
+            className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primaryForeground disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {add.isPending ? 'Adding...' : message || 'Add'}
+            {addToCart.isPending ? 'Adding...' : message || 'Add'}
           </button>
         </div>
       </div>
