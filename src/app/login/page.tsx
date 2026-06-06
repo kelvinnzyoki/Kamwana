@@ -2,7 +2,16 @@
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, ApiRequestError } from '@/lib/api';
+
+function getReadableError(error: unknown) {
+  if (error instanceof ApiRequestError) {
+    const data = error.data as any;
+    return data?.message || error.message || 'Authentication failed.';
+  }
+  if (error instanceof Error) return error.message;
+  return 'Authentication failed.';
+}
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -30,11 +39,8 @@ function LoginContent() {
 
       const body: Record<string, string> = { password };
 
-      if (identifierType === 'email') {
-        body.email = identifier.toLowerCase();
-      } else {
-        body.phone = identifier;
-      }
+      if (identifierType === 'email') body.email = identifier.toLowerCase();
+      else body.phone = identifier;
 
       if (mode === 'register') {
         if (!name) throw new Error('Enter your full name.');
@@ -46,7 +52,7 @@ function LoginContent() {
 
       window.location.assign(next);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Authentication failed.');
+      setError(getReadableError(error));
     } finally {
       setLoading(false);
     }
