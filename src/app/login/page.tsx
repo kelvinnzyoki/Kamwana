@@ -13,16 +13,16 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  async function submit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const form = new FormData(e.currentTarget);
-      const password = String(form.get('password') || '');
-      const name = String(form.get('name') || '');
+      const form = new FormData(event.currentTarget);
+      const name = String(form.get('name') || '').trim();
       const identifier = String(form.get('identifier') || '').trim();
+      const password = String(form.get('password') || '');
 
       if (!identifier || !password) {
         throw new Error('Enter your email/phone and password.');
@@ -37,16 +37,16 @@ function LoginContent() {
       }
 
       if (mode === 'register') {
+        if (!name) throw new Error('Enter your full name.');
         body.name = name;
         await api.register(body);
       } else {
         await api.login(body);
       }
 
-      window.location.href = next;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Authentication failed. Try again.';
-      setError(message);
+      window.location.assign(next);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Authentication failed.');
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ function LoginContent() {
         {mode === 'login' ? 'Sign in' : 'Create account'}
       </h1>
       <p className="mb-6 text-sm opacity-70">
-        Sign in to continue checkout, view orders, and keep your cart saved.
+        Continue shopping, save your bag, and checkout securely.
       </p>
 
       <form onSubmit={submit} className="space-y-4 rounded-3xl border border-border bg-card p-6">
@@ -92,7 +92,7 @@ function LoginContent() {
           name="identifier"
           required
           type={identifierType === 'email' ? 'email' : 'tel'}
-          placeholder={identifierType === 'email' ? 'Email address' : 'Phone number e.g. 2547XXXXXXXX'}
+          placeholder={identifierType === 'email' ? 'Email address' : 'Phone e.g. 0712345678 or 254712345678'}
           className="w-full rounded-xl border border-border bg-background p-3"
         />
 
@@ -100,6 +100,7 @@ function LoginContent() {
           name="password"
           required
           type="password"
+          minLength={mode === 'register' ? 8 : 1}
           placeholder="Password"
           className="w-full rounded-xl border border-border bg-background p-3"
         />
@@ -111,10 +112,11 @@ function LoginContent() {
         )}
 
         <button
+          type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-primary py-3 font-bold text-primaryForeground disabled:opacity-60"
+          className="w-full rounded-full bg-primary py-3 font-bold text-primaryForeground disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? 'Please wait...' : 'Continue'}
+          {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
         </button>
 
         <button
