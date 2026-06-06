@@ -1,34 +1,38 @@
 'use client';
 
 import { useState } from 'react';
-import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/api';
 
 export function AddToCart({ productId }: { productId: string }) {
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
 
-  const mutation = useMutation({
+  const addToCart = useMutation({
     mutationFn: () => api.addCart(productId, 1),
-    onSuccess: () => {
+    onSuccess: async () => {
       setMessage('Added to bag');
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      await queryClient.invalidateQueries({ queryKey: ['cart'] });
       setTimeout(() => setMessage(''), 1400);
     },
-    onError: (err: any) => {
-      setMessage(err?.message || 'Failed to add');
-      setTimeout(() => setMessage(''), 2200);
+    onError: (error: any) => {
+      setMessage(error?.message || 'Failed to add');
+      setTimeout(() => setMessage(''), 2500);
     },
   });
 
   return (
-    <button
-      type="button"
-      disabled={mutation.isPending}
-      onClick={() => mutation.mutate()}
-      className="rounded-full bg-primary px-8 py-3 font-bold text-primaryForeground disabled:opacity-60"
-    >
-      {mutation.isPending ? 'Adding...' : message || 'Add to bag'}
-    </button>
+    <div className="space-y-3">
+      <button
+        type="button"
+        disabled={addToCart.isPending}
+        onClick={() => addToCart.mutate()}
+        className="rounded-full bg-primary px-8 py-3 font-bold text-primaryForeground disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {addToCart.isPending ? 'Adding...' : 'Add to bag'}
+      </button>
+
+      {message && <p className="text-sm font-medium">{message}</p>}
+    </div>
   );
 }
