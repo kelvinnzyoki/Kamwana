@@ -196,6 +196,8 @@ export const api = {
     }),
   paystack: (orderId: string) =>
     request<any>(`/api/payments/paystack/initialize/${orderId}`, { method: 'POST' }),
+  verifyPaystack: (reference: string) =>
+    request<any>(`/api/payments/paystack/verify/${reference}`),
   mpesa: (orderId: string, phoneNumber: string) =>
     request<any>(`/api/payments/mpesa/stk/${orderId}`, {
       method: 'POST',
