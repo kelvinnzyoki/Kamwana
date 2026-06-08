@@ -107,6 +107,22 @@ export const api = {
 
   register: (body: any) => authRequest<any>('/api/auth/register', body),
   login: (body: any) => authRequest<any>('/api/auth/login', body),
+
+  // Verification helpers used by the login/signup page.
+  // The aliases keep older page.tsx versions compiling while using the same backend routes.
+  sendEmailCode: (email: string) =>
+    request<any>('/api/auth/send-email-code', { method: 'POST', body: JSON.stringify({ email }) }),
+  verifyEmailCode: (target: string, code: string) =>
+    request<any>('/api/auth/verify-email-code', { method: 'POST', body: JSON.stringify({ target, code }) }),
+  sendPhoneCode: (phone: string) =>
+    request<any>('/api/auth/send-phone-code', { method: 'POST', body: JSON.stringify({ phone }) }),
+  verifyPhoneCode: (target: string, code: string) =>
+    request<any>('/api/auth/verify-phone-code', { method: 'POST', body: JSON.stringify({ target, code }) }),
+  verifyEmail: (email: string) =>
+    request<any>('/api/auth/send-email-code', { method: 'POST', body: JSON.stringify({ email }) }),
+  verifyPhone: (phone: string) =>
+    request<any>('/api/auth/send-phone-code', { method: 'POST', body: JSON.stringify({ phone }) }),
+
   me: () => request<any>('/api/auth/me'),
   logout: async () => {
     const result = await request<any>('/api/auth/logout', { method: 'POST' });
