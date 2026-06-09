@@ -1,21 +1,28 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from '@/components/providers';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Navbar } from '@/components/Navbar';
-import { ClasicClosetLogo } from '@/components/ClasicClosetLogo';
+import { Footer } from '@/components/layout/footer';
 
-export default function RootLayout({ children }) {
+export const metadata: Metadata = {
+  title: 'Classic Closet',
+  description: 'Modern luxury clothing shop',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>       {/* ← Navbar AND all pages must be inside this */}
+        <Providers>
           <Navbar />
           <main>{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>
   );
 }
-export const metadata: Metadata = { title:'Classic Closet', description:'Modern luxury clothing shop' };
