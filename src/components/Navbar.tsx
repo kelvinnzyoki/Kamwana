@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, ApiRequestError } from '@/lib/api';
 import { ClasicClosetLogo } from '@/components/ClasicClosetLogo';
@@ -15,16 +16,18 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const queryClient = useQueryClient();
+  const pathname = usePathname(); // ← usePathname avoids server/client hydration mismatch
 
   // ── Auth state ─────────────────────────────────────────────────────────────
-  // retry:false so a 401 (not logged in) doesn't spam the server
   const { data: meData, isLoading: authLoading } = useQuery({
     queryKey: ['me'],
     queryFn: api.me,
     retry: false,
-    staleTime: 5 * 60 * 1000, // treat as fresh for 5 min
+    staleTime: 2 * 60 * 1000,
   });
-  const user = meData?.data?.user;
+
+  // Guard against unexpected response shapes
+  const user = meData?.data?.user ?? null;
 
   // ── Cart count ─────────────────────────────────────────────────────────────
   const { data: cartData } = useQuery({
@@ -43,15 +46,19 @@ export function Navbar() {
   const logout = useMutation({
     mutationFn: api.logout,
     onSuccess: () => {
-      queryClient.setQueryData(['me'], null);
-      queryClient.setQueryData(['cart'], null);
+      // Invalidate so every component using ['me'] immediately sees logged-out state
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+      queryClient.removeQueries({ queryKey: ['cart'] });
       setUserMenuOpen(false);
+      setMenuOpen(false);
+      window.location.href = '/';
+    },
+    onError: () => {
+      // Even if the server call fails, clear local state and redirect
+      queryClient.invalidateQueries({ queryKey: ['me'] });
       window.location.href = '/';
     },
   });
-
-  const currentPath =
-    typeof window !== 'undefined' ? window.location.pathname : '';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -59,19 +66,17 @@ export function Navbar() {
 
         {/* ── Logo ──────────────────────────────────────────────────────────── */}
         <a href="/" className="shrink-0">
-          <ClasicClosetLogo />
+          <ClasicClosetLogo variant="dark" />
         </a>
 
-        {/* ── Desktop nav links ─────────────────────────────────────────────── */}
+        {/* ── Desktop nav ───────────────────────────────────────────────────── */}
         <nav className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                currentPath.startsWith(link.href)
-                  ? 'text-primary'
-                  : 'text-foreground/70'
+                pathname?.startsWith(link.href) ? 'text-primary' : 'text-foreground/70'
               }`}
             >
               {link.label}
@@ -79,14 +84,14 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* ── Right actions ─────────────────────────────────────────────────── */}
+        {/* ── Right side ────────────────────────────────────────────────────── */}
         <div className="flex items-center gap-2">
 
-          {/* Cart */}
+          {/* Cart badge */}
           <a
             href="/cart"
             className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted transition-colors"
-            aria-label={`Cart${cartCount > 0 ? ` (${cartCount} items)` : ''}`}
+            aria-label={`Cart${cartCount > 0 ? ` — ${cartCount} items` : ''}`}
           >
             <CartIcon />
             {cartCount > 0 && (
@@ -96,63 +101,52 @@ export function Navbar() {
             )}
           </a>
 
-          {/* Auth — desktop */}
+          {/* Auth — desktop only */}
           <div className="hidden md:block">
             {authLoading ? (
+              // Skeleton while the ['me'] query is in-flight
               <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
             ) : user ? (
-              // ── Logged-in user menu ──────────────────────────────────────
+              // ── Logged in ────────────────────────────────────────────────
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen((o) => !o)}
                   className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors"
                 >
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primaryForeground">
-                    {user.name.charAt(0).toUpperCase()}
+                    {user.name?.charAt(0)?.toUpperCase() ?? '?'}
                   </span>
-                  <span className="max-w-[100px] truncate">{user.name.split(' ')[0]}</span>
+                  <span className="max-w-[100px] truncate">{user.name?.split(' ')[0]}</span>
                   <ChevronIcon open={userMenuOpen} />
                 </button>
 
                 {userMenuOpen && (
                   <>
-                    {/* Backdrop */}
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setUserMenuOpen(false)}
-                    />
-                    {/* Dropdown */}
+                    <div className="fixed inset-0 z-10" onClick={() => setUserMenuOpen(false)} />
                     <div className="absolute right-0 top-full z-20 mt-2 w-52 rounded-2xl border border-border bg-background shadow-lg overflow-hidden">
                       <div className="px-4 py-3 border-b border-border">
                         <p className="text-sm font-semibold truncate">{user.name}</p>
                         <p className="text-xs opacity-50 truncate">{user.email || user.phone}</p>
-                        {(!user.emailVerified && !user.phoneVerified) && (
-                          <a
-                            href="/verify"
-                            className="mt-1.5 inline-block text-xs text-amber-600 underline"
-                          >
+                        {!user.emailVerified && !user.phoneVerified && (
+                          <a href="/verify" className="mt-1 inline-block text-xs text-amber-600 underline">
                             Verify your account
                           </a>
                         )}
                       </div>
                       <div className="py-1">
-                        {[
-                          { label: 'My Orders', href: '/orders' },
-                          { label: 'Account Settings', href: '/account' },
-                        ].map((item) => (
-                          <a
-                            key={item.href}
-                            href={item.href}
-                            className="flex items-center px-4 py-2.5 text-sm hover:bg-muted transition-colors"
-                            onClick={() => setUserMenuOpen(false)}
-                          >
-                            {item.label}
-                          </a>
-                        ))}
+                        <a href="/orders" onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center px-4 py-2.5 text-sm hover:bg-muted transition-colors">
+                          My Orders
+                        </a>
+                        <a href="/account" onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center px-4 py-2.5 text-sm hover:bg-muted transition-colors">
+                          Account Settings
+                        </a>
+                        <hr className="my-1 border-border" />
                         <button
                           onClick={() => logout.mutate()}
                           disabled={logout.isPending}
-                          className="flex w-full items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                          className="flex w-full items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
                         >
                           {logout.isPending ? 'Signing out…' : 'Sign out'}
                         </button>
@@ -164,23 +158,19 @@ export function Navbar() {
             ) : (
               // ── Not logged in ────────────────────────────────────────────
               <div className="flex items-center gap-2">
-                <a
-                  href="/login"
-                  className="rounded-full px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
-                >
+                <a href="/login"
+                  className="rounded-full px-4 py-2 text-sm font-medium hover:bg-muted transition-colors">
                   Sign in
                 </a>
-                <a
-                  href="/login?mode=register"
-                  className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primaryForeground hover:opacity-90 transition-opacity"
-                >
+                <a href="/login?mode=register"
+                  className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primaryForeground hover:opacity-90 transition-opacity">
                   Join
                 </a>
               </div>
             )}
           </div>
 
-          {/* Mobile menu toggle */}
+          {/* Hamburger — mobile only */}
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted transition-colors md:hidden"
@@ -191,59 +181,46 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* ── Mobile menu ─────────────────────────────────────────────────────── */}
+      {/* ── Mobile drawer ───────────────────────────────────────────────────── */}
       {menuOpen && (
         <div className="border-t border-border bg-background md:hidden">
-          <nav className="flex flex-col px-4 py-4 gap-1">
+          <nav className="flex flex-col gap-1 px-4 py-4">
             {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className={`rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted ${
-                  currentPath.startsWith(link.href) ? 'bg-muted' : ''
-                }`}
-              >
+              <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
+                className={`rounded-xl px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors ${
+                  pathname?.startsWith(link.href) ? 'bg-muted' : ''
+                }`}>
                 {link.label}
               </a>
             ))}
 
-            <div className="mt-2 border-t border-border pt-3">
+            <div className="mt-2 border-t border-border pt-3 space-y-1">
               {user ? (
                 <>
-                  <div className="px-3 py-2 mb-1">
+                  <div className="px-3 py-2">
                     <p className="font-semibold text-sm">{user.name}</p>
                     <p className="text-xs opacity-50">{user.email || user.phone}</p>
                   </div>
                   <a href="/orders" onClick={() => setMenuOpen(false)}
-                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted">
-                    My Orders
-                  </a>
+                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted">My Orders</a>
                   <a href="/account" onClick={() => setMenuOpen(false)}
-                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted">
-                    Account Settings
-                  </a>
+                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted">Account Settings</a>
                   <button
-                    onClick={() => { logout.mutate(); setMenuOpen(false); }}
-                    className="w-full rounded-xl px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-50"
+                    onClick={() => logout.mutate()}
+                    disabled={logout.isPending}
+                    className="w-full rounded-xl px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                   >
-                    Sign out
+                    {logout.isPending ? 'Signing out…' : 'Sign out'}
                   </button>
                 </>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <a
-                    href="/login"
-                    onClick={() => setMenuOpen(false)}
-                    className="rounded-xl border border-border px-4 py-2.5 text-center text-sm font-medium"
-                  >
+                  <a href="/login" onClick={() => setMenuOpen(false)}
+                    className="rounded-xl border border-border px-4 py-2.5 text-center text-sm font-medium">
                     Sign in
                   </a>
-                  <a
-                    href="/login?mode=register"
-                    onClick={() => setMenuOpen(false)}
-                    className="rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-bold text-primaryForeground"
-                  >
+                  <a href="/login?mode=register" onClick={() => setMenuOpen(false)}
+                    className="rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-bold text-primaryForeground">
                     Create account
                   </a>
                 </div>
