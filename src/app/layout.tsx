@@ -5,8 +5,6 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Navbar } from '@/components/Navbar';
 import { ClasicClosetLogo } from '@/components/ClasicClosetLogo';
-// src/app/layout.tsx
-import { Providers } from './providers';
 
 export default function RootLayout({ children }) {
   return (
