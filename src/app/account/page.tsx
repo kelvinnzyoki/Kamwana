@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { api, ApiRequestError } from '@/lib/api';
+import { api, apiFetch, ApiRequestError } from '@/lib/api';
 
 function getError(err: unknown): string {
   if (err instanceof ApiRequestError) return err.message;
@@ -10,9 +10,13 @@ function getError(err: unknown): string {
   return 'Something went wrong.';
 }
 
-// ─── Section wrapper ──────────────────────────────────────────────────────────
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
       <h2 className="font-semibold">{title}</h2>
@@ -20,8 +24,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     </div>
   );
 }
-
-// ─── Verify badge ─────────────────────────────────────────────────────────────
 
 function VerifyBadge({
   verified,
@@ -39,8 +41,10 @@ function VerifyBadge({
       </span>
     );
   }
+
   return (
     <button
+      type="button"
       onClick={onSend}
       className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-200 transition-colors"
     >
@@ -48,8 +52,6 @@ function VerifyBadge({
     </button>
   );
 }
-
-// ─── OTP modal ────────────────────────────────────────────────────────────────
 
 function OtpModal({
   type,
@@ -66,51 +68,78 @@ function OtpModal({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Auto-send OTP when modal opens
-    (type === 'phone' ? api.sendPhoneOtp() : api.sendEmailOtp())
+    const sendOtp =
+      type === 'phone' ? api.sendPhoneOtp : api.sendEmailOtp;
+
+    if (!sendOtp) {
+      setError(`${type} verification endpoint is not available yet.`);
+      return;
+    }
+
+    sendOtp()
       .then(() => setSent(true))
-      .catch((e) => setError(getError(e)));
+      .catch((err: unknown) => setError(getError(err)));
   }, [type]);
 
   async function verify() {
     setError('');
     setLoading(true);
+
     try {
-      if (type === 'phone') await api.verifyPhone(code.trim());
-      else await api.verifyEmail(code.trim());
+      if (type === 'phone') {
+        await api.verifyPhone(code.trim());
+      } else {
+        await api.verifyEmail(code.trim());
+      }
+
       onVerified();
-    } catch (e) {
-      setError(getError(e));
+    } catch (err) {
+      setError(getError(err));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
       <div className="w-full max-w-sm rounded-3xl border border-border bg-background p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">
             Verify your {type === 'phone' ? 'phone' : 'email'}
           </h3>
-          <button onClick={onClose} className="opacity-40 hover:opacity-70 text-lg">✕</button>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-lg opacity-40 hover:opacity-70"
+          >
+            ✕
+          </button>
         </div>
+
         {sent && (
           <p className="text-sm opacity-60">
-            A 6-digit code was sent to your {type === 'phone' ? 'phone number' : 'email address'}.
+            A 6-digit code was sent to your{' '}
+            {type === 'phone' ? 'phone number' : 'email address'}.
           </p>
         )}
+
         <input
           value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+          onChange={(event) =>
+            setCode(event.target.value.replace(/\D/g, '').slice(0, 6))
+          }
           inputMode="numeric"
           maxLength={6}
           placeholder="000000"
           autoFocus
           className="w-full rounded-xl border border-border bg-muted p-3 text-center text-2xl font-bold tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-primary"
         />
+
         {error && <p className="text-sm text-red-600">{error}</p>}
+
         <button
+          type="button"
           onClick={verify}
           disabled={loading || code.length !== 6}
           className="w-full rounded-full bg-primary py-2.5 font-bold text-primaryForeground disabled:opacity-50"
@@ -121,8 +150,6 @@ function OtpModal({
     </div>
   );
 }
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AccountPage() {
   const queryClient = useQueryClient();
@@ -143,7 +170,6 @@ export default function AccountPage() {
     if (user?.name) setName(user.name);
   }, [user?.name]);
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!isLoading && !user) {
       window.location.href = '/login?next=/account';
@@ -152,11 +178,10 @@ export default function AccountPage() {
 
   const saveName = useMutation({
     mutationFn: () =>
-      api.apiFetch?.('/api/auth/profile', {
+      apiFetch('/api/auth/profile', {
         method: 'PATCH',
         body: JSON.stringify({ name: name.trim() }),
-      }) ??
-      Promise.resolve(), // fallback if endpoint not yet implemented
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
       setSaved(true);
@@ -189,27 +214,31 @@ export default function AccountPage() {
 
       <h1 className="text-3xl font-bold">Account</h1>
 
-      {/* Profile */}
       <Section title="Profile">
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium mb-1.5">Full name</label>
+            <label className="mb-1.5 block text-sm font-medium">
+              Full name
+            </label>
+
             <input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(event) => setName(event.target.value)}
               className="w-full rounded-xl border border-border bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">Email</label>
+            <label className="mb-1.5 block text-sm font-medium">Email</label>
+
             <div className="flex items-center gap-2">
-              <p className="flex-1 rounded-xl border border-border bg-muted px-3 py-2.5 text-sm opacity-60 truncate">
+              <p className="flex-1 truncate rounded-xl border border-border bg-muted px-3 py-2.5 text-sm opacity-60">
                 {user.email ?? '—'}
               </p>
+
               {user.email && (
                 <VerifyBadge
-                  verified={user.emailVerified}
+                  verified={Boolean(user.emailVerified)}
                   type="email"
                   onSend={() => setOtpModal('email')}
                 />
@@ -218,14 +247,16 @@ export default function AccountPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">Phone</label>
+            <label className="mb-1.5 block text-sm font-medium">Phone</label>
+
             <div className="flex items-center gap-2">
-              <p className="flex-1 rounded-xl border border-border bg-muted px-3 py-2.5 text-sm opacity-60 truncate">
+              <p className="flex-1 truncate rounded-xl border border-border bg-muted px-3 py-2.5 text-sm opacity-60">
                 {user.phone ?? '—'}
               </p>
+
               {user.phone && (
                 <VerifyBadge
-                  verified={user.phoneVerified}
+                  verified={Boolean(user.phoneVerified)}
                   type="phone"
                   onSend={() => setOtpModal('phone')}
                 />
@@ -233,9 +264,18 @@ export default function AccountPage() {
             </div>
           </div>
 
+          {saveName.error && (
+            <p className="text-sm text-red-600">
+              {getError(saveName.error)}
+            </p>
+          )}
+
           <button
+            type="button"
             onClick={() => saveName.mutate()}
-            disabled={saveName.isPending || !name.trim() || name.trim() === user.name}
+            disabled={
+              saveName.isPending || !name.trim() || name.trim() === user.name
+            }
             className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primaryForeground disabled:opacity-40 transition-opacity"
           >
             {saveName.isPending ? 'Saving…' : saved ? '✓ Saved' : 'Save changes'}
@@ -243,12 +283,19 @@ export default function AccountPage() {
         </div>
       </Section>
 
-      {/* Quick links */}
       <Section title="My account">
         <div className="space-y-1">
           {[
-            { label: 'Order history', href: '/orders', desc: 'View all your past orders' },
-            { label: 'Shop', href: '/shop', desc: 'Continue browsing' },
+            {
+              label: 'Order history',
+              href: '/orders',
+              desc: 'View all your past orders',
+            },
+            {
+              label: 'Shop',
+              href: '/shop',
+              desc: 'Continue browsing',
+            },
           ].map((link) => (
             <a
               key={link.href}
@@ -259,15 +306,16 @@ export default function AccountPage() {
                 <p className="text-sm font-medium">{link.label}</p>
                 <p className="text-xs opacity-50">{link.desc}</p>
               </div>
-              <span className="opacity-30 text-sm">→</span>
+
+              <span className="text-sm opacity-30">→</span>
             </a>
           ))}
         </div>
       </Section>
 
-      {/* Danger zone */}
       <Section title="Session">
         <button
+          type="button"
           onClick={() => api.logout().then(() => (window.location.href = '/'))}
           className="rounded-full border border-red-200 px-5 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
         >
@@ -276,4 +324,4 @@ export default function AccountPage() {
       </Section>
     </main>
   );
-}
+        }
