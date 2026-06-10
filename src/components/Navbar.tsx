@@ -47,7 +47,7 @@ export function Navbar() {
     mutationFn: api.logout,
     onSuccess: () => {
       // Invalidate so every component using ['me'] immediately sees logged-out state
-      queryClient.invalidateQueries({ queryKey: ['me'] });
+      queryClient.removeQueries({ queryKey: ['me'] });
       queryClient.removeQueries({ queryKey: ['cart'] });
       setUserMenuOpen(false);
       setMenuOpen(false);
@@ -55,7 +55,7 @@ export function Navbar() {
     },
     onError: () => {
       // Even if the server call fails, clear local state and redirect
-      queryClient.invalidateQueries({ queryKey: ['me'] });
+      queryClient.removeQueries({ queryKey: ['me'] });
       window.location.href = '/';
     },
   });
