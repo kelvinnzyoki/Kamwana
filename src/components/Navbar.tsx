@@ -1,9 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, ApiRequestError } from '@/lib/api';
 import { ClasicClosetLogo } from '@/components/ClasicClosetLogo';
@@ -18,8 +16,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const queryClient = useQueryClient();
-  const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const pathname = usePathname(); // ← usePathname avoids server/client hydration mismatch
 
   // ── Auth state ─────────────────────────────────────────────────────────────
   const { data: meData, isLoading: authLoading } = useQuery({
@@ -28,6 +25,8 @@ export function Navbar() {
     retry: false,
     staleTime: 2 * 60 * 1000,
   });
+
+  // Guard against unexpected response shapes
   const user = meData?.data?.user ?? null;
 
   // ── Cart count ─────────────────────────────────────────────────────────────
@@ -47,6 +46,7 @@ export function Navbar() {
   const logout = useMutation({
     mutationFn: api.logout,
     onSuccess: () => {
+      // Invalidate so every component using ['me'] immediately sees logged-out state
       queryClient.removeQueries({ queryKey: ['me'] });
       queryClient.removeQueries({ queryKey: ['cart'] });
       setUserMenuOpen(false);
@@ -54,6 +54,7 @@ export function Navbar() {
       window.location.href = '/';
     },
     onError: () => {
+      // Even if the server call fails, clear local state and redirect
       queryClient.removeQueries({ queryKey: ['me'] });
       window.location.href = '/';
     },
@@ -64,16 +65,17 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
 
         {/* ── Logo ──────────────────────────────────────────────────────────── */}
-        {/* FIX: was <a> — now uses Next.js Link for client-side navigation */}
-        <Link href="/" className="shrink-0">
-          <ClasicClosetLogo variant="dark" />
-        </Link>
+        <a href="/" className="shrink-0">
+          {/* variant="auto" uses text-foreground, which flips with the
+              dark/light theme via next-themes. variant="dark" hardcoded
+              #111111 — invisible on a dark-mode navbar background. */}
+          <ClasicClosetLogo variant="auto" />
+        </a>
 
         {/* ── Desktop nav ───────────────────────────────────────────────────── */}
         <nav className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map((link) => (
-            // FIX: was <a> — now uses Link for client-side navigation
-            <Link
+            <a
               key={link.href}
               href={link.href}
               className={`text-sm font-medium transition-colors hover:text-primary ${
@@ -81,26 +83,15 @@ export function Navbar() {
               }`}
             >
               {link.label}
-            </Link>
+            </a>
           ))}
         </nav>
 
         {/* ── Right side ────────────────────────────────────────────────────── */}
-        <div className="flex items-center gap-1 sm:gap-2">
-
-          {/* FIX: theme toggle was missing from Navbar (it only existed in the
-              dead header.tsx). Added here using next-themes useTheme hook. */}
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-          </button>
+        <div className="flex items-center gap-2">
 
           {/* Cart badge */}
-          {/* FIX: was <a> — now uses Link */}
-          <Link
+          <a
             href="/cart"
             className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted transition-colors"
             aria-label={`Cart${cartCount > 0 ? ` — ${cartCount} items` : ''}`}
@@ -111,11 +102,12 @@ export function Navbar() {
                 {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
-          </Link>
+          </a>
 
           {/* Auth — desktop only */}
           <div className="hidden md:block">
             {authLoading ? (
+              // Skeleton while the ['me'] query is in-flight
               <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
             ) : user ? (
               // ── Logged in ────────────────────────────────────────────────
@@ -127,53 +119,32 @@ export function Navbar() {
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primaryForeground">
                     {user.name?.charAt(0)?.toUpperCase() ?? '?'}
                   </span>
-                  <span className="max-w-[100px] truncate">
-                    {user.name?.split(' ')[0]}
-                  </span>
+                  <span className="max-w-[100px] truncate">{user.name?.split(' ')[0]}</span>
                   <ChevronIcon open={userMenuOpen} />
                 </button>
 
                 {userMenuOpen && (
                   <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setUserMenuOpen(false)}
-                    />
+                    <div className="fixed inset-0 z-10" onClick={() => setUserMenuOpen(false)} />
                     <div className="absolute right-0 top-full z-20 mt-2 w-52 rounded-2xl border border-border bg-background shadow-lg overflow-hidden">
                       <div className="px-4 py-3 border-b border-border">
-                        <p className="text-sm font-semibold truncate">
-                          {user.name}
-                        </p>
-                        <p className="text-xs opacity-50 truncate">
-                          {user.email || user.phone}
-                        </p>
+                        <p className="text-sm font-semibold truncate">{user.name}</p>
+                        <p className="text-xs opacity-50 truncate">{user.email || user.phone}</p>
                         {!user.emailVerified && !user.phoneVerified && (
-                          // FIX: was <a> — now uses Link
-                          <Link
-                            href="/verify"
-                            className="mt-1 inline-block text-xs text-amber-600 underline"
-                            onClick={() => setUserMenuOpen(false)}
-                          >
+                          <a href="/verify" className="mt-1 inline-block text-xs text-amber-600 underline">
                             Verify your account
-                          </Link>
+                          </a>
                         )}
                       </div>
                       <div className="py-1">
-                        {/* FIX: all menu items were <a> — now use Link */}
-                        <Link
-                          href="/orders"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center px-4 py-2.5 text-sm hover:bg-muted transition-colors"
-                        >
+                        <a href="/orders" onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center px-4 py-2.5 text-sm hover:bg-muted transition-colors">
                           My Orders
-                        </Link>
-                        <Link
-                          href="/account"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center px-4 py-2.5 text-sm hover:bg-muted transition-colors"
-                        >
+                        </a>
+                        <a href="/account" onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center px-4 py-2.5 text-sm hover:bg-muted transition-colors">
                           Account Settings
-                        </Link>
+                        </a>
                         <hr className="my-1 border-border" />
                         <button
                           onClick={() => logout.mutate()}
@@ -190,19 +161,14 @@ export function Navbar() {
             ) : (
               // ── Not logged in ────────────────────────────────────────────
               <div className="flex items-center gap-2">
-                {/* FIX: was <a> — now uses Link */}
-                <Link
-                  href="/login"
-                  className="rounded-full px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
-                >
+                <a href="/login"
+                  className="rounded-full px-4 py-2 text-sm font-medium hover:bg-muted transition-colors">
                   Sign in
-                </Link>
-                <Link
-                  href="/login?mode=register"
-                  className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primaryForeground hover:opacity-90 transition-opacity"
-                >
+                </a>
+                <a href="/login?mode=register"
+                  className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primaryForeground hover:opacity-90 transition-opacity">
                   Join
-                </Link>
+                </a>
               </div>
             )}
           </div>
@@ -223,17 +189,12 @@ export function Navbar() {
         <div className="border-t border-border bg-background md:hidden">
           <nav className="flex flex-col gap-1 px-4 py-4">
             {NAV_LINKS.map((link) => (
-              // FIX: was <a> — now uses Link
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
+              <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
                 className={`rounded-xl px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors ${
                   pathname?.startsWith(link.href) ? 'bg-muted' : ''
-                }`}
-              >
+                }`}>
                 {link.label}
-              </Link>
+              </a>
             ))}
 
             <div className="mt-2 border-t border-border pt-3 space-y-1">
@@ -241,24 +202,12 @@ export function Navbar() {
                 <>
                   <div className="px-3 py-2">
                     <p className="font-semibold text-sm">{user.name}</p>
-                    <p className="text-xs opacity-50">
-                      {user.email || user.phone}
-                    </p>
+                    <p className="text-xs opacity-50">{user.email || user.phone}</p>
                   </div>
-                  <Link
-                    href="/orders"
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted"
-                  >
-                    My Orders
-                  </Link>
-                  <Link
-                    href="/account"
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted"
-                  >
-                    Account Settings
-                  </Link>
+                  <a href="/orders" onClick={() => setMenuOpen(false)}
+                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted">My Orders</a>
+                  <a href="/account" onClick={() => setMenuOpen(false)}
+                    className="block rounded-xl px-3 py-2.5 text-sm hover:bg-muted">Account Settings</a>
                   <button
                     onClick={() => logout.mutate()}
                     disabled={logout.isPending}
@@ -269,20 +218,14 @@ export function Navbar() {
                 </>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <Link
-                    href="/login"
-                    onClick={() => setMenuOpen(false)}
-                    className="rounded-xl border border-border px-4 py-2.5 text-center text-sm font-medium"
-                  >
+                  <a href="/login" onClick={() => setMenuOpen(false)}
+                    className="rounded-xl border border-border px-4 py-2.5 text-center text-sm font-medium">
                     Sign in
-                  </Link>
-                  <Link
-                    href="/login?mode=register"
-                    onClick={() => setMenuOpen(false)}
-                    className="rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-bold text-primaryForeground"
-                  >
+                  </a>
+                  <a href="/login?mode=register" onClick={() => setMenuOpen(false)}
+                    className="rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-bold text-primaryForeground">
                     Create account
-                  </Link>
+                  </a>
                 </div>
               )}
             </div>
@@ -302,33 +245,6 @@ function CartIcon() {
       <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
       <line x1="3" y1="6" x2="21" y2="6" />
       <path d="M16 10a4 4 0 0 1-8 0" />
-    </svg>
-  );
-}
-
-// FIX: added SunIcon and MoonIcon for the new theme toggle
-function SunIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
-      strokeLinecap="round" className="w-5 h-5">
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
-      strokeLinecap="round" className="w-5 h-5">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }
@@ -357,8 +273,7 @@ function CloseIcon() {
 function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-      strokeLinecap="round"
-      className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`}>
+      strokeLinecap="round" className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`}>
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
