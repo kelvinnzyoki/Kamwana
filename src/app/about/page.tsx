@@ -15,7 +15,7 @@ export default function AboutPage() {
         </h1>
 
         <p className="text-base opacity-70 leading-relaxed max-w-lg">
-          Classic Closet was born from a simple frustration: quality, stylish
+          Clasic Closet was born from a simple frustration: quality, stylish
           clothing that fits the Kenyan body and budget was too hard to find in
           one place. We fixed that.
         </p>
@@ -81,8 +81,8 @@ export default function AboutPage() {
             },
             {
               label: 'Instagram',
-              value: '@classiccloset',
-              href: 'https://instagram.com/classiccloset',
+              value: '@tam.cc',
+              href: 'https://instagram.com/tam.cc',
             },
           ].map((contact) => (
             <div key={contact.label} className="flex items-center gap-3">
