@@ -1,4 +1,4 @@
-'use client';
+use client';
 
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -7,7 +7,7 @@ import { money } from '@/lib/money';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type PaymentMethod = 'MPESA' | 'PAYSTACK';
+type PaymentMethod = 'PAYSTACK';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -29,31 +29,6 @@ function CheckoutSkeleton() {
       <div className="mb-6 h-32 rounded-3xl bg-border" />
       <div className="h-96 rounded-3xl bg-border" />
     </section>
-  );
-}
-
-// ─── M-Pesa success ───────────────────────────────────────────────────────────
-
-function MpesaSuccess({ phone }: { phone: string }) {
-  return (
-    <div className="rounded-3xl border border-green-500/30 bg-green-500/10 p-10 text-center">
-      <p className="mb-3 text-4xl">📱</p>
-      <h2 className="mb-2 text-2xl font-bold">Check your phone</h2>
-      <p className="opacity-70">
-        An M-Pesa STK push was sent to{' '}
-        <strong className="font-semibold">{phone}</strong>. Enter your PIN to
-        complete payment.
-      </p>
-      <p className="mt-2 text-sm opacity-50">
-        Didn't receive it? Wait 30 seconds — it can be slightly delayed.
-      </p>
-      <a
-        href="/orders"
-        className="mt-6 inline-block rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primaryForeground"
-      >
-        View my orders
-      </a>
-    </div>
   );
 }
 
@@ -95,10 +70,8 @@ function CartSummary({ items }: { items: any[] }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function CheckoutPage() {
-  const [method, setMethod] = useState<PaymentMethod>('MPESA');
+  const [method] = useState<PaymentMethod>('PAYSTACK');
   const [orderId, setOrderId] = useState('');
-  const [mpesaPhone, setMpesaPhone] = useState('');
-  const [mpesaSuccess, setMpesaSuccess] = useState(false);
 
   // ── Auth: guests are redirected to login then returned here ──────────────────
   // Checkout is the ONE page that correctly requires auth.
@@ -116,13 +89,7 @@ export default function CheckoutPage() {
   const cartItems: any[] = cart.data?.data?.cart?.items ?? [];
   const cartIsEmpty = cart.isSuccess && cartItems.length === 0;
 
-  // ── Pre-fill M-Pesa phone from user account ──────────────────────────────────
   const user = me.data?.data?.user;
-  useEffect(() => {
-    if (user?.phone && !mpesaPhone) {
-      setMpesaPhone(user.phone);
-    }
-  }, [user?.phone]);
 
   // ── Create order ─────────────────────────────────────────────────────────────
   const checkout = useMutation({
@@ -130,44 +97,30 @@ export default function CheckoutPage() {
     onSuccess: (r) => setOrderId(r.data.order.id),
   });
 
-  // ── Trigger payment ──────────────────────────────────────────────────────────
+  // ── Trigger Paystack payment ─────────────────────────────────────────────────
   const pay = useMutation({
     mutationFn: async () => {
-      if (method === 'PAYSTACK') {
-        const r = await api.paystack(orderId);
-        // Paystack returns authorization_url (snake_case) — handle both casings
-        const url = r.data?.authorizationUrl ?? r.data?.authorization_url;
-        if (url) {
-          window.location.href = url;
-        } else {
-          throw new Error('No payment URL returned from Paystack.');
-        }
-        return;
+      const r = await api.paystack(orderId);
+      // Paystack returns authorization_url (snake_case) — handle both casings
+      const url = r.data?.authorizationUrl ?? r.data?.authorization_url;
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No payment URL returned from Paystack.');
       }
-      // M-Pesa STK push
-      await api.mpesa(orderId, mpesaPhone);
-    },
-    onSuccess: () => {
-      if (method === 'MPESA') setMpesaSuccess(true);
     },
   });
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
-    const shippingPhone = String(f.get('phone') || '');
-
-    // Carry shipping phone into M-Pesa field if user hasn't typed one separately
-    if (method === 'MPESA' && !mpesaPhone) {
-      setMpesaPhone(shippingPhone);
-    }
 
     checkout.mutate({
       paymentMethod: method,
       shippingAddress: {
         firstName: f.get('firstName'),
         lastName: f.get('lastName'),
-        phone: shippingPhone,
+        phone: String(f.get('phone') || ''),
         email: f.get('email'),
         address1: f.get('address1'),
         city: f.get('city'),
@@ -184,14 +137,6 @@ export default function CheckoutPage() {
   if (me.error instanceof ApiRequestError && me.error.status === 401) {
     return (
       <p className="p-10 text-center opacity-60">Redirecting to sign in…</p>
-    );
-  }
-
-  if (mpesaSuccess) {
-    return (
-      <section className="mx-auto max-w-2xl px-4 py-16">
-        <MpesaSuccess phone={mpesaPhone} />
-      </section>
     );
   }
 
@@ -288,49 +233,28 @@ export default function CheckoutPage() {
             className="rounded-xl border border-border bg-background p-3"
           />
 
-          {/* Payment method toggle */}
+          {/* Payment method */}
           <div className="sm:col-span-2">
             <p className="mb-2 text-sm font-semibold opacity-60">
               Payment method
             </p>
             <div className="grid grid-cols-2 gap-2 rounded-xl bg-background p-1">
-              {(
-                [
-                  { value: 'MPESA', label: '📱 M-Pesa' },
-                  { value: 'PAYSTACK', label: '💳 Card / Paystack' },
-                ] as { value: PaymentMethod; label: string }[]
-              ).map(({ value, label }) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setMethod(value)}
-                  className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
-                    method === value
-                      ? 'bg-primary text-primaryForeground shadow-sm'
-                      : 'opacity-60 hover:opacity-80'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+              <div className="rounded-lg border border-border bg-muted px-3 py-2.5 text-center">
+                <div className="text-sm font-semibold opacity-60">📱 M-Pesa</div>
+                <div className="mt-1 text-xs font-medium text-amber-600">
+                  Coming Soon
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primaryForeground shadow-sm"
+                aria-pressed="true"
+              >
+                💳 Card / Paystack
+              </button>
             </div>
           </div>
-
-          {/* M-Pesa phone — collected here upfront, not after order creation */}
-          {method === 'MPESA' && (
-            <div className="sm:col-span-2">
-              <p className="mb-1.5 text-sm font-semibold opacity-60">
-                M-Pesa number to charge
-              </p>
-              <input
-                value={mpesaPhone}
-                onChange={(e) => setMpesaPhone(e.target.value)}
-                required
-                placeholder="e.g. 0712 345 678 or 254712345678"
-                className="w-full rounded-xl border border-border bg-background p-3"
-              />
-            </div>
-          )}
 
           <button
             type="submit"
@@ -343,40 +267,19 @@ export default function CheckoutPage() {
       )}
 
       {/* ── Step 2: Payment trigger ────────────────────────────────────────── */}
-      {orderId && !mpesaSuccess && (
+      {orderId && (
         <div className="rounded-3xl border border-border bg-card p-6">
           <p className="mb-1 font-semibold">Order created — complete your payment</p>
           <p className="mb-5 text-sm opacity-60">
             Your items are reserved. Complete payment to confirm.
           </p>
 
-          {/* Allow editing M-Pesa number before paying */}
-          {method === 'MPESA' && (
-            <div className="mb-4">
-              <p className="mb-1.5 text-sm font-semibold opacity-60">
-                M-Pesa number
-              </p>
-              <input
-                value={mpesaPhone}
-                onChange={(e) => setMpesaPhone(e.target.value)}
-                placeholder="2547XXXXXXXX"
-                className="w-full rounded-xl border border-border bg-background p-3"
-              />
-            </div>
-          )}
-
           <button
-            disabled={
-              pay.isPending || (method === 'MPESA' && !mpesaPhone.trim())
-            }
+            disabled={pay.isPending}
             onClick={() => pay.mutate()}
             className="w-full rounded-full bg-primary px-6 py-3 font-bold text-primaryForeground disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {pay.isPending
-              ? 'Processing…'
-              : method === 'MPESA'
-              ? 'Send M-Pesa STK push'
-              : 'Continue to Paystack'}
+            {pay.isPending ? 'Processing…' : 'Continue to Paystack'}
           </button>
         </div>
       )}
