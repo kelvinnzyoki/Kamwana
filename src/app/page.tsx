@@ -33,7 +33,7 @@ export default async function Home() {
         {/* FIX: was text-muted-foreground (not in Tailwind config) → opacity-60 */}
         <p className="mx-auto mt-6 max-w-2xl opacity-60">
           Discover curated clothing pieces and shop safely with M-Pesa or
-          Paystack.
+          Card.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
