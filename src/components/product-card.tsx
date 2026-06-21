@@ -9,8 +9,6 @@ import { api } from '@/lib/api';
 import { money } from '@/lib/money';
 import type { Product } from '@/lib/types';
 
-const SIZE_OPTIONS = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'];
-
 type Notice = {
   type: 'success' | 'error';
   text: string;
@@ -26,11 +24,30 @@ export function ProductCard({ p }: { p: Product }) {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [selectedSize, setSelectedSize] = useState('');
 
-  const availableSizes = useMemo(
-    () => new Set((p.sizes ?? []).map((size) => size.toUpperCase())),
-    [p.sizes]
-  );
-  const hasSizes = availableSizes.size > 0;
+  // FIX: render buttons from the product's OWN sizes, not a hardcoded
+  // clothing-only list. The previous SIZE_OPTIONS constant
+  // (['S','M','L','XL',...]) was looped over regardless of category — p.sizes
+  // was only ever used to compute which of THOSE fixed letters should be
+  // enabled, so a shoe with sizes ["39","40","41"] showed every clothing
+  // letter struck through and disabled, with the real sizes nowhere on
+  // screen. Same bug, same fix as ui.tsx's AddToCart — this is the listing
+  // grid's separate, lighter-weight card component, so it needed the
+  // identical correction applied independently.
+  const displaySizes = useMemo(() => {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const raw of p.sizes ?? []) {
+      const trimmed = raw.trim();
+      const key = trimmed.toUpperCase();
+      if (trimmed && !seen.has(key)) {
+        seen.add(key);
+        result.push(trimmed);
+      }
+    }
+    return result;
+  }, [p.sizes]);
+
+  const hasSizes = displaySizes.length > 0;
 
   function showNotice(nextNotice: Notice, duration = 2500) {
     setNotice(nextNotice);
@@ -75,44 +92,38 @@ export function ProductCard({ p }: { p: Product }) {
 
         <p className="line-clamp-2 text-sm opacity-70">{p.description}</p>
 
-        <div>
-          <p className="mb-1.5 text-xs font-semibold opacity-60">Sizes</p>
-          <div className="flex flex-wrap gap-1.5">
-            {SIZE_OPTIONS.map((size) => {
-              const available = availableSizes.has(size);
-              const active = selectedSize === size;
+        {hasSizes && (
+          <div>
+            <p className="mb-1.5 text-xs font-semibold opacity-60">Sizes</p>
+            <div className="flex flex-wrap gap-1.5">
+              {displaySizes.map((size) => {
+                const active = selectedSize === size;
 
-              return (
-                <button
-                  key={size}
-                  type="button"
-                  disabled={!available}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    setSelectedSize(size);
-                    setNotice(null);
-                  }}
-                  className={`min-w-9 rounded-full border px-2 py-1 text-xs font-semibold transition-colors ${
-                    active
-                      ? 'border-primary bg-primary text-primaryForeground'
-                      : available
-                      ? 'border-border hover:border-primary'
-                      : 'cursor-not-allowed border-border opacity-30 line-through'
-                  }`}
-                  aria-pressed={active}
-                  aria-label={
-                    available
-                      ? `Select size ${size}`
-                      : `Size ${size} is unavailable`
-                  }
-                >
-                  {size}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setSelectedSize(size);
+                      setNotice(null);
+                    }}
+                    className={`min-w-9 rounded-full border px-2 py-1 text-xs font-semibold transition-colors ${
+                      active
+                        ? 'border-primary bg-primary text-primaryForeground'
+                        : 'border-border hover:border-primary'
+                    }`}
+                    aria-pressed={active}
+                    aria-label={`Select size ${size}`}
+                  >
+                    {size}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center justify-between gap-3">
           <b>{money(Number(p.price))}</b>
