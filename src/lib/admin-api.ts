@@ -31,6 +31,11 @@ export const adminApi = {
     return apiFetch<any>(`/api/admin/products?${qs.toString()}`);
   },
 
+  // Fetches a single product directly by ID, independent of pagination —
+  // used by the "Edit" deep-link so it works no matter which page of
+  // results that product would normally appear on.
+  product: (id: string) => apiFetch<any>(`/api/admin/products/${id}`),
+
   createProduct: (body: any) =>
     apiFetch<any>('/api/admin/products', {
       method: 'POST',
@@ -54,4 +59,8 @@ export const adminApi = {
     if (params.page) qs.set('page', String(params.page));
     return apiFetch<any>(`/api/admin/customers?${qs.toString()}`);
   },
+
+  // Full customer profile: contact info, saved addresses, and complete
+  // order history with per-order billing/payment detail.
+  customer: (id: string) => apiFetch<any>(`/api/admin/customers/${id}`),
 };
