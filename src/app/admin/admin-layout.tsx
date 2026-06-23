@@ -80,8 +80,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </aside>
 
-        {/* ── Mobile top nav ─────────────────────────────────────────────── */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background">
+        {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)]">
           <nav className="flex">
             {NAV_ITEMS.map((item) => {
               const active = item.href === '/admin'
@@ -104,7 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* ── Main content ────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-4 sm:px-6 py-6 pb-20 md:pb-6">
+        <main className="flex-1 min-w-0 px-4 sm:px-6 py-6 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6">
           {children}
         </main>
       </div>
