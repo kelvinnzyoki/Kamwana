@@ -7,22 +7,15 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 const NAV_ITEMS = [
-  { label: 'Overview',  href: '/admin',           icon: '📊' },
-  { label: 'Orders',    href: '/admin/orders',     icon: '📦' },
-  { label: 'Products',  href: '/admin/products',   icon: '👕' },
-  { label: 'Customers', href: '/admin/customers',  icon: '👥' },
+  { label: 'Overview',  href: '/admin',          icon: '📊' },
+  { label: 'Orders',    href: '/admin/orders',    icon: '📦' },
+  { label: 'Products',  href: '/admin/products',  icon: '👕' },
+  { label: 'Customers', href: '/admin/customers', icon: '👥' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // ── Role gate ────────────────────────────────────────────────────────────────
-  // This is a UX convenience, NOT the real security boundary — every
-  // /api/admin/* route is independently protected server-side by
-  // requireAuth + requireAdmin (see admin.routes.ts). A non-admin who
-  // somehow lands on this page would just see empty/error states because
-  // every API call would 403. This redirect just avoids that confusing
-  // experience and sends them somewhere sensible immediately.
   const { data: meData, isLoading } = useQuery({
     queryKey: ['me'],
     queryFn: api.me,
@@ -40,23 +33,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (isLoading || !isAdmin) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <div className="mx-auto max-w-7xl flex">
-
-        {/* ── Sidebar ─────────────────────────────────────────────────────── */}
-        <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-border bg-background min-h-screen sticky top-0">
-          <div className="px-5 py-5 border-b border-border">
-            <p className="font-bold text-lg">ClasicCloset</p>
-            <p className="text-xs opacity-40">Admin Dashboard</p>
-          </div>
-          <nav className="flex-1 px-3 py-4 space-y-1">
+    <div>
+      {/* ── Admin nav strip ────────────────────────────────────────────────────
+          Sits directly below the shop navbar (which the root layout renders).
+          Always visible on all screen sizes — no fixed-bottom approach which
+          was being hidden by the browser's own navigation bar on Android.
+          Desktop gets a wider pill-style horizontal nav; mobile gets a full-
+          width strip of equal-sized tabs. ───────────────────────────────── */}
+      <div className="sticky top-16 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="mx-auto max-w-7xl">
+          {/* Mobile: full-width equal tabs */}
+          <nav className="flex md:hidden">
             {NAV_ITEMS.map((item) => {
               const active = item.href === '/admin'
                 ? pathname === '/admin'
@@ -65,24 +59,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
-                    active ? 'bg-primary text-primaryForeground' : 'hover:bg-muted'
+                  className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-semibold transition-colors border-b-2 ${
+                    active
+                      ? 'border-primary text-primary'
+                      : 'border-transparent opacity-50 hover:opacity-80'
                   }`}
                 >
-                  <span>{item.icon}</span>
+                  <span className="text-sm">{item.icon}</span>
                   {item.label}
                 </Link>
               );
             })}
           </nav>
-          <div className="px-5 py-4 border-t border-border">
-            <Link href="/" className="text-xs opacity-50 hover:opacity-80">← Back to shop</Link>
-          </div>
-        </aside>
 
-        {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)]">
-          <nav className="flex">
+          {/* Desktop: pill-style horizontal nav with back-to-shop link */}
+          <div className="hidden md:flex items-center gap-1 px-4 py-2">
+            <span className="text-xs font-bold opacity-40 mr-2 tracking-wider uppercase">
+              Admin
+            </span>
             {NAV_ITEMS.map((item) => {
               const active = item.href === '/admin'
                 ? pathname === '/admin'
@@ -91,23 +85,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium ${
-                    active ? 'text-primary' : 'opacity-50'
+                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                    active
+                      ? 'bg-primary text-primaryForeground'
+                      : 'hover:bg-muted opacity-70 hover:opacity-100'
                   }`}
                 >
-                  <span className="text-base">{item.icon}</span>
+                  <span className="text-xs">{item.icon}</span>
                   {item.label}
                 </Link>
               );
             })}
-          </nav>
+            <Link
+              href="/"
+              className="ml-auto text-xs opacity-40 hover:opacity-70 transition-opacity"
+            >
+              ← Back to shop
+            </Link>
+          </div>
         </div>
-
-        {/* ── Main content ────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-4 sm:px-6 py-6 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6">
-          {children}
-        </main>
       </div>
+
+      {/* ── Page content ────────────────────────────────────────────────────── */}
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
+        {children}
+      </main>
     </div>
   );
 }
