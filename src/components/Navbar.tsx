@@ -158,7 +158,7 @@ export function Navbar() {
                         <p className="text-sm font-semibold truncate">{user.name}</p>
                         <p className="text-xs opacity-50 truncate">{user.email || user.phone}</p>
                         {!user.emailVerified && !user.phoneVerified && (
-                          <a href="/verify" className="mt-1 inline-block text-xs text-amber-600 underline">
+                          <a href="/account" className="mt-1 inline-block text-xs text-amber-600 underline">
                             Verify your account
                           </a>
                         )}
