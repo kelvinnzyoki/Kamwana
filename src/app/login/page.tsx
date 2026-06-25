@@ -104,7 +104,7 @@ function OtpStep({ type, target, onDone }: { type: 'email' | 'phone'; target: st
         <p className="text-3xl mb-3">{type === 'phone' ? '📱' : '📧'}</p>
         <h2 className="text-xl font-bold">Check your {type === 'phone' ? 'phone' : 'email'}</h2>
         <p className="mt-1 text-sm opacity-60">
-          We sent a 6-digit code to <strong>{maskedTarget}</strong>
+          We sent a 6-digit code to <strong>{maskedTarget}</strong>. Your account will be created after verification.
         </p>
       </div>
       <form onSubmit={verify} className="space-y-4">
@@ -196,8 +196,8 @@ function LoginContent() {
     staleTime: 0, // always fetch fresh — never redirect based on stale cache
   });
   useEffect(() => {
-    if (isSuccess && !isFetching && meData?.data?.user) window.location.replace(next);
-  }, [meData, isSuccess, isFetching, next]);
+    if (mode === 'login' && step === 'credentials' && isSuccess && !isFetching && meData?.data?.user) window.location.replace(next);
+  }, [meData, isSuccess, isFetching, next, mode, step]);
 
   function validateField(field: string, value: string): string {
     if (field === 'name' && mode === 'register') {
@@ -247,9 +247,9 @@ function LoginContent() {
       else body.phone = identifier;
       if (mode === 'register') {
         body.name = name.trim();
-        await api.register(body);
-        setOtpTarget(identifier);
-        setOtpType(identifierType);
+        const result = await api.register(body);
+        setOtpTarget(result?.data?.identifier || identifier);
+        setOtpType((result?.data?.verificationType as 'email' | 'phone') || identifierType);
         setStep('otp');
       } else {
         await api.login(body);
