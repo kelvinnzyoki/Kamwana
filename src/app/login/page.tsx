@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { api, ApiRequestError } from '@/lib/api';
@@ -43,19 +43,53 @@ function OtpStep({ type, target, onDone }: { type: 'email' | 'phone'; target: st
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resent, setResent] = useState(false);
+  const [initialSending, setInitialSending] = useState(true);
+  const sentOnMount = useRef(false);
 
   // ── Resend cooldown ─────────────────────────────────────────────────────────
-  // Mirrors the backend's 60s OTP_COOLDOWN_MS (otp.service.ts). A code was
-  // already sent the moment this step mounted (via registration), so the
-  // cooldown starts immediately rather than waiting for a first resend.
+  // The backend enforces the same 60s cooldown per target+type. The OTP is sent
+  // by this component after registration, so the UI only starts the cooldown
+  // after the send endpoint confirms success.
   const RESEND_COOLDOWN = 60;
-  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setInterval(() => setCooldown((c) => Math.max(0, c - 1)), 1000);
     return () => clearInterval(timer);
   }, [cooldown]);
+
+  async function sendCode(initial = false) {
+    if (!initial && cooldown > 0) return;
+    setError('');
+    if (initial) setInitialSending(true);
+    try {
+      if (type === 'phone') await api.sendPhoneOtp();
+      else await api.sendEmailOtp();
+      setResent(!initial);
+      setCooldown(RESEND_COOLDOWN);
+      if (!initial) setTimeout(() => setResent(false), 5000);
+    } catch (err) {
+      if (err instanceof ApiRequestError) {
+        setError(err.message);
+        const match = err.message.match(/(\d+)s/);
+        if (match) setCooldown(Number(match[1]));
+      } else {
+        setError(`Could not send ${type === 'phone' ? 'SMS' : 'email'} code.`);
+      }
+    } finally {
+      if (initial) setInitialSending(false);
+    }
+  }
+
+  useEffect(() => {
+    // React Strict Mode can mount effects twice in development. This guard avoids
+    // double OTP requests and false cooldown errors.
+    if (sentOnMount.current) return;
+    sentOnMount.current = true;
+    void sendCode(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function verify(e: React.FormEvent) {
     e.preventDefault();
@@ -72,26 +106,7 @@ function OtpStep({ type, target, onDone }: { type: 'email' | 'phone'; target: st
   }
 
   async function resend() {
-    if (cooldown > 0) return;
-    setError('');
-    try {
-      if (type === 'phone') await api.sendPhoneOtp();
-      else await api.sendEmailOtp();
-      setResent(true);
-      setCooldown(RESEND_COOLDOWN);
-      setTimeout(() => setResent(false), 5000);
-    } catch (err) {
-      if (err instanceof ApiRequestError) {
-        setError(err.message);
-        // If the backend's own cooldown (429) fired — e.g. another tab
-        // already resent — sync our timer to the seconds it reports
-        // instead of leaving the button enabled.
-        const match = err.message.match(/(\d+)s/);
-        setCooldown(match ? Number(match[1]) : RESEND_COOLDOWN);
-      } else {
-        setError('Could not resend code.');
-      }
-    }
+    await sendCode(false);
   }
 
   const maskedTarget = type === 'email'
@@ -104,7 +119,7 @@ function OtpStep({ type, target, onDone }: { type: 'email' | 'phone'; target: st
         <p className="text-3xl mb-3">{type === 'phone' ? '📱' : '📧'}</p>
         <h2 className="text-xl font-bold">Check your {type === 'phone' ? 'phone' : 'email'}</h2>
         <p className="mt-1 text-sm opacity-60">
-          We sent a 6-digit code to <strong>{maskedTarget}</strong>
+          {initialSending ? 'Sending code to ' : 'We sent a 6-digit code to '}<strong>{maskedTarget}</strong>
         </p>
       </div>
       <form onSubmit={verify} className="space-y-4">
@@ -116,15 +131,15 @@ function OtpStep({ type, target, onDone }: { type: 'email' | 'phone'; target: st
         />
         {error && <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-600">{error}</p>}
         {resent && <p className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700">✓ New code sent.</p>}
-        <button type="submit" disabled={loading || code.length !== 6}
+        <button type="submit" disabled={loading || initialSending || code.length !== 6}
           className="w-full rounded-full bg-primary py-3 font-bold text-primaryForeground disabled:cursor-not-allowed disabled:opacity-50">
-          {loading ? 'Verifying…' : 'Verify'}
+          {initialSending ? 'Sending code…' : loading ? 'Verifying…' : 'Verify'}
         </button>
       </form>
       <div className="flex items-center justify-between text-sm">
         <button
           onClick={resend}
-          disabled={cooldown > 0}
+          disabled={initialSending || cooldown > 0}
           className="text-primary underline hover:no-underline disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline"
         >
           {cooldown > 0 ? `Resend code (${cooldown}s)` : 'Resend code'}
