@@ -30,16 +30,36 @@ const STATUS_STYLES: Record<string, string> = {
 function OrderRow({ order }: { order: any }) {
   const [expanded, setExpanded] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const queryClient = useQueryClient();
 
   const updateStatus = useMutation({
     mutationFn: (status: string) => adminApi.updateOrderStatus(order.id, status),
-    onSuccess: () => {
+    onSuccess: (res: any, status) => {
       setError('');
+
+      const warning = res?.data?.deliveredEmailWarning;
+      const deliveredEmailSent = res?.data?.deliveredEmailSent;
+
+      if (status === 'DELIVERED') {
+        if (deliveredEmailSent) {
+          setNotice('Delivered email and PDF receipt sent to the customer.');
+        } else if (warning) {
+          setNotice(`Order marked delivered, but email was not sent: ${warning}`);
+        } else {
+          setNotice('Order marked delivered.');
+        }
+      } else {
+        setNotice('Order status updated.');
+      }
+
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      setTimeout(() => setNotice(''), 6000);
     },
-    onError: (err) =>
-      setError(err instanceof ApiRequestError ? err.message : 'Update failed'),
+    onError: (err) => {
+      setNotice('');
+      setError(err instanceof ApiRequestError ? err.message : 'Update failed');
+    },
   });
 
   return (
@@ -116,6 +136,7 @@ function OrderRow({ order }: { order: any }) {
                 </button>
               ))}
             </div>
+            {notice && <p className="text-xs text-green-700 dark:text-green-400 mt-2">{notice}</p>}
             {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
           </div>
         </div>
