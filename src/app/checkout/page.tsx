@@ -123,9 +123,11 @@ export default function CheckoutPage() {
         phone: String(f.get('phone') || ''),
         email: f.get('email'),
         address1: f.get('address1'),
+        address2: f.get('address2'),
         city: f.get('city'),
         county: f.get('county'),
-        country: 'Kenya',
+        postalCode: f.get('postalCode'),
+        country: f.get('country') || 'Kenya',
       },
     });
   }
@@ -186,14 +188,14 @@ export default function CheckoutPage() {
             required
             placeholder="First name"
             autoComplete="given-name"
-            className="rounded-xl border border-border bg-background p-3"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
           />
           <input
             name="lastName"
             required
             placeholder="Last name"
             autoComplete="family-name"
-            className="rounded-xl border border-border bg-background p-3"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
           />
           <input
             name="email"
@@ -202,7 +204,7 @@ export default function CheckoutPage() {
             autoComplete="email"
             defaultValue={user?.email || ''}
             placeholder="Email address"
-            className="rounded-xl border border-border bg-background p-3"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
           />
           <input
             name="phone"
@@ -210,27 +212,47 @@ export default function CheckoutPage() {
             autoComplete="tel"
             defaultValue={user?.phone || ''}
             placeholder="Phone e.g. 0712 345 678"
-            className="rounded-xl border border-border bg-background p-3"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
           />
           <input
             name="address1"
             required
-            autoComplete="street-address"
-            placeholder="Delivery address"
-            className="rounded-xl border border-border bg-background p-3 sm:col-span-2"
+            autoComplete="address-line1"
+            placeholder="Delivery address / Street address"
+            className="min-w-0 rounded-xl border border-border bg-background p-3 sm:col-span-2"
+          />
+          <input
+            name="address2"
+            autoComplete="address-line2"
+            placeholder="Apartment, building, landmark (optional)"
+            className="min-w-0 rounded-xl border border-border bg-background p-3 sm:col-span-2"
           />
           <input
             name="city"
             required
             autoComplete="address-level2"
             placeholder="City / Town"
-            className="rounded-xl border border-border bg-background p-3"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
           />
           <input
             name="county"
             autoComplete="address-level1"
             placeholder="County (optional)"
-            className="rounded-xl border border-border bg-background p-3"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
+          />
+          <input
+            name="postalCode"
+            autoComplete="postal-code"
+            placeholder="Postal code (optional)"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
+          />
+          <input
+            name="country"
+            required
+            autoComplete="country-name"
+            defaultValue="Kenya"
+            placeholder="Country"
+            className="min-w-0 rounded-xl border border-border bg-background p-3"
           />
 
           {/* Payment method */}
