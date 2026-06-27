@@ -80,7 +80,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (me.error instanceof ApiRequestError && me.error.status === 401) {
-      window.location.href = `/login?next=${encodeURIComponent('/checkout')}`;
+      window.location.href = `/login?next=${encodeURIComponent('/checkout')}&intent=checkout`;
     }
   }, [me.error]);
 
