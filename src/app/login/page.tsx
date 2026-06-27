@@ -173,7 +173,9 @@ function EyeOffIcon() {
 function LoginContent() {
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/shop';
-  const defaultMode = (searchParams.get('mode') as Mode) || 'login';
+  const intent = searchParams.get('intent');
+  const isCheckoutFlow = intent === 'checkout' || next === '/checkout';
+  const defaultMode = ((searchParams.get('mode') as Mode) || (isCheckoutFlow ? 'register' : 'login')) as Mode;
 
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [identifierType, setIdentifierType] = useState<IdentifierType>('email');
@@ -267,9 +269,26 @@ function LoginContent() {
   return (
     <div className="space-y-6 rounded-3xl border border-border bg-card p-6 sm:p-8">
       <div>
-        <h1 className="text-2xl font-bold">{mode === 'login' ? 'Welcome back' : 'Create your account'}</h1>
+        {isCheckoutFlow && (
+          <div className="mb-5 rounded-2xl border border-primary/30 bg-primary/10 p-4 text-sm">
+            <p className="font-bold">Continue to payment</p>
+            <p className="mt-1 opacity-70">
+              {mode === 'register'
+                ? 'Create your ClasicCloset account to securely complete your order and continue to Paystack.'
+                : 'Sign in to your ClasicCloset account to securely complete your order and continue to Paystack.'}
+            </p>
+          </div>
+        )}
+
+        <h1 className="text-2xl font-bold">
+          {mode === 'login'
+            ? isCheckoutFlow ? 'Sign in to continue payment' : 'Welcome back'
+            : isCheckoutFlow ? 'Create account to continue payment' : 'Create your account'}
+        </h1>
         <p className="mt-1 text-sm opacity-60">
-          {mode === 'login' ? 'Sign in to your Classic Closet account' : 'Join Classic Closet today'}
+          {mode === 'login'
+            ? isCheckoutFlow ? 'Your bag is saved. Sign in to finish checkout.' : 'Sign in to your Classic Closet account'
+            : isCheckoutFlow ? 'Verify your account, then you will return to checkout.' : 'Join Classic Closet today'}
         </p>
       </div>
 
@@ -331,10 +350,14 @@ function LoginContent() {
         </button>
 
         <p className="text-center text-sm opacity-70">
-          {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
+          {mode === 'login'
+            ? isCheckoutFlow ? 'New customer?' : "Don't have an account?"
+            : 'Already have an account?'}{' '}
           <button type="button" onClick={() => { setMode((m) => m === 'login' ? 'register' : 'login'); setFieldErrors({}); setTouched({}); setGlobalError(''); }}
             className="font-semibold underline">
-            {mode === 'login' ? 'Register' : 'Sign in'}
+            {mode === 'login'
+              ? isCheckoutFlow ? 'Create account to pay' : 'Register'
+              : isCheckoutFlow ? 'Sign in instead' : 'Sign in'}
           </button>
         </p>
       </form>
