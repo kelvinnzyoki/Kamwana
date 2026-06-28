@@ -102,11 +102,21 @@ async function request<T>(
   const endpoint = path.startsWith('/') ? path : `/${path}`;
   const isServer = typeof window === 'undefined';
 
-  // Only skip the refresh interceptor for the auth-flow endpoints themselves.
-  const skipRefresh =
-    path.includes('/api/auth/login') ||
-    path.includes('/api/auth/register') ||
-    path.includes('/api/auth/refresh');
+  // Do not run the refresh interceptor for public authentication flows.
+  // Password reset must stay independent from logged-in sessions; a guest who
+  // requests a reset code should never trigger POST /api/auth/refresh.
+  const PUBLIC_AUTH_ENDPOINTS = [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/refresh',
+    '/api/auth/password/forgot',
+    '/api/auth/password/reset',
+    '/api/auth/email/send-otp',
+    '/api/auth/email/verify',
+    '/api/auth/phone/send-otp',
+    '/api/auth/phone/verify',
+  ];
+  const skipRefresh = PUBLIC_AUTH_ENDPOINTS.some((publicPath) => endpoint === publicPath);
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
@@ -242,6 +252,18 @@ export const api = {
     clearGuestCartId();
     return data;
   },
+
+  forgotPassword: (email: string) =>
+    request<any>('/api/auth/password/forgot', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
+  resetPassword: (email: string, code: string, password: string) =>
+    request<any>('/api/auth/password/reset', {
+      method: 'POST',
+      body: JSON.stringify({ email, code, password }),
+    }),
 
   cart: () => request<any>('/api/cart'),
   addCart: (productId: string, quantity = 1, size?: string) =>
