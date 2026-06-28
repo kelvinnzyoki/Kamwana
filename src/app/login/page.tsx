@@ -216,20 +216,6 @@ function LoginContent() {
     if (shouldCheckExistingSession && isSuccess && !isFetching && meData?.data?.user) window.location.replace(next);
   }, [meData, isSuccess, isFetching, next, shouldCheckExistingSession]);
 
-  async function postAuth(path: string, body: Record<string, string>) {
-    const response = await fetch(`/api/auth${path}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(payload?.message || payload?.error || 'Request failed. Please try again.');
-    }
-    return payload;
-  }
-
   function switchMode(nextMode: Mode) {
     setMode(nextMode);
     setFieldErrors({});
@@ -311,11 +297,11 @@ function LoginContent() {
       if (mode === 'forgot') {
         const email = identifier.toLowerCase().trim();
         if (!resetCodeSent) {
-          await postAuth('/password/forgot', { email });
+          await api.forgotPassword(email);
           setResetCodeSent(true);
           setSuccessMessage('If that email exists, a reset code has been sent. Check your inbox.');
         } else {
-          await postAuth('/password/reset', { email, code: resetCode.trim(), password: newPassword });
+          await api.resetPassword(email, resetCode.trim(), newPassword);
           setSuccessMessage('Password reset successful. Sign in with your new password.');
           setPassword('');
           setNewPassword('');
