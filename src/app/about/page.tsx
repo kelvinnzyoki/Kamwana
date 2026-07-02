@@ -71,18 +71,18 @@ export default function AboutPage() {
           {[
             {
               label: 'Email',
-              value: 'hello@cctamcc.site',
-              href: 'mailto:hello@cctamcc.site',
+              value: 'support@cctamcc.site',
+              href: 'mailto: support@cctamcc.site',
             },
             {
               label: 'WhatsApp',
-              value: '+254 700 000 000',
-              href: 'https://wa.me/254700000000',
+              value: '+254 789574634',
+              href: 'https://wa.me/254789574634',
             },
             {
               label: 'Instagram',
-              value: '@tam.cc',
-              href: 'https://instagram.com/tam.cc',
+              value: '@cctam.cc',
+              href: 'https://www.instagram.com/cctam.cc?igsh=MXVmZjhma2wzZ2J0cw==',
             },
           ].map((contact) => (
             <div key={contact.label} className="flex items-center gap-3">
